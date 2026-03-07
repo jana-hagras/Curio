@@ -1,0 +1,7 @@
+import 'dotenv/config'; 
+import { bootstrap } from "./app.controller.js";
+
+const app = bootstrap();
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
