@@ -103,6 +103,22 @@ The backend will start and automatically:
 
 ---
 
+# node_modules Folder
+
+The `node_modules` folder contains all project dependencies.
+
+This folder is **not included in the repository** because it can be very large.
+
+Instead, it is automatically created by running:
+
+```bash
+npm install
+```
+
+This command reads the dependencies from `package.json` and downloads them.
+
+---
+
 # Frontend Setup
 
 Open another terminal and navigate to the frontend folder:
@@ -128,23 +144,6 @@ The frontend will run locally on:
 ```
 http://localhost:3000
 ```
-
----
-
-# node_modules Folder
-
-The `node_modules` folder contains all project dependencies.
-
-This folder is **not included in the repository** because it can be very large.
-
-Instead, it is automatically created by running:
-
-```bash
-npm install
-```
-
-This command reads the dependencies from `package.json` and downloads them.
-
 ---
 
 # Database Tables
