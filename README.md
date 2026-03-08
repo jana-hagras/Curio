@@ -239,12 +239,16 @@ DELETE /user/:id
 * API documentation
 
 ---
+# Prototype link:
+https://www.figma.com/proto/UzAp7JCpZQc9DbDfvPjtnR/Egyptique?node-id=29-405&t=Ocdo2nqffXSr8q49-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=10%3A837&show-proto-sidebar=1
 
-# Author
+# Authors
 
 Jana Hagars
-Business Information Systems Student
-Full Stack Developer | Data Analyst
+Youssef Ahmed
+Adham Baher
+Anas Mohammed
+Ahmed Abdelrehim 
 
 ---
 
