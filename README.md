@@ -1,262 +1,187 @@
-# CURIO – Full Stack Marketplace Platform
 
-CURIO is a **Full Stack web platform** that connects **buyers and artisans**.
-Buyers can request custom handmade products, while artisans can showcase their work, apply to requests, and sell products through a marketplace.
+# <img src="assets/logo.png" alt="CURIO Logo" width="120" /> CURIO
 
-The platform provides a system for **portfolio management, custom requests, product ordering, and reviews**.
+### 🔧 Tech Versions
+
+![Node.js](https://img.shields.io/badge/Node.js-v18.17.0-brightgreen?logo=node.js&logoColor=white) ![React](https://img.shields.io/badge/React-v18.2.0-61DAFB?logo=react&logoColor=white) ![Flutter](https://img.shields.io/badge/Flutter-v3.13.4-02569B?logo=flutter&logoColor=white) ![npm](https://img.shields.io/badge/npm-dependencies-blue?logo=npm) ![MySQL](https://img.shields.io/badge/MySQL-v8.1.0-4479A1?logo=mysql&logoColor=white)
 
 ---
 
-# Tech Stack
+**CURIO** is a **Full Stack Marketplace Platform** connecting **buyers and artisans**.  
+Buyers request custom handmade products, while artisans showcase, sell, and apply to requests.  
+
+The platform supports multiple clients, including a **React-based Web App** and **Flutter Mobile App**, all powered by a centralized Node.js/MySQL backend.
+
+---
+
+## 📦 Table of Contents
+
+<details>
+<summary>Click to expand</summary>
+
+1. [Tech Stack](#-tech-stack)  
+2. [Project Structure](#-project-structure)  
+3. [Quick Setup](#-quick-setup)  
+4. [Backend Setup](#-backend-setup)  
+5. [Frontend (React) Setup](#-frontend-react-setup)  
+6. [Mobile (Flutter) Setup](#-mobile-flutter-setup)  
+7. [Database](#-database)  
+8. [Features](#-features)  
+9. [Prototype](#-prototype)  
+10. [Authors](#-authors)  
+
+</details>
+
+---
+
+## 🛠 Tech Stack
 
 ### Backend
+* Node.js, Express.js, MySQL
 
-* Node.js
-* Express.js
-* MySQL
-* mysql2
-
-### Frontend
-
-* React / Flutter / React Native (depending on implementation)
-
-### Tools
-
-* Git & GitHub
-* Postman / Thunder Client
-* npm
+### Frontend & Mobile
+* **Web:** React.js
+* **Mobile:** Flutter / React Native
 
 ---
 
-# Project Structure
+## 📁 Project Structure
 
-```
+```text
 CURIO/
 │
-├── backend/
-│   ├── db/
-│   │   ├── connection.js
-│   │   └── setup.js
-│   │
-│   ├── modules/
-│   │   ├── auth/
-│   │   ├── user/
-│   │   ├── portfolioProjects/
-│   │   └── ...
-│   │
-│   ├── server.js
-│   └── package.json
+├── backend/               # Node.js API
+│   ├── db/                # Database connection & init
+│   ├── modules/           # Auth, User, Portfolio, Marketplace
+│   └── server.js
 │
-├── frontend/
+├── frontend-react/        # React Web Application
 │   ├── src/
-│   ├── public/
-│   └── package.json
+│   └── public/
 │
-├── .gitignore
-└── README.md
+├── mobile-flutter/        # Flutter Mobile Application
+│   ├── lib/
+│   └── assets/
+│
+├── assets/                # README static files
+└── .gitignore
+
 ```
 
 ---
 
-# Installation
-
-Clone the repository:
+## ⚡ Quick Setup
 
 ```bash
-git clone https://github.com/yourusername/curio-fullstack.git
+git clone [https://github.com/jana-hagras/curio-fullstack.git](https://github.com/hagras/curio-fullstack.git)
 cd curio-fullstack
+
 ```
 
 ---
 
-# Backend Setup
-
-Navigate to the backend folder:
+## 🖥 Backend Setup
 
 ```bash
 cd backend
-```
-
-Install dependencies:
-
-```bash
 npm install
-```
-
-Run the backend server:
-
-```bash
 npm start
+
 ```
 
-or
+*The database and tables are automatically created on the first run if your MySQL credentials are set.*
 
-```bash
-node index.js
-```
-
-The backend will start and automatically:
-
-* Connect to MySQL
-* Create the **CURIO database**
-* Create all required tables
-
+---
 ---
 
 # node_modules Folder
 
-The `node_modules` folder contains all project dependencies.
+The `node_modules` folder contains all project dependencies.  
 
-This folder is **not included in the repository** because it can be very large.
+This folder is **not included in the repository** because it can be very large.  
 
 Instead, it is automatically created by running:
 
 ```bash
 npm install
-```
+````
 
 This command reads the dependencies from `package.json` and downloads them.
 
+
+```
 ---
 
-# Frontend Setup
-
-Open another terminal and navigate to the frontend folder:
+## 🌐 Frontend (React) Setup
 
 ```bash
-cd frontend
-```
-
-Install dependencies:
-
-```bash
+cd frontend-react
 npm install
+npm start
+
 ```
 
-Start the frontend application:
+Visit the web app at: [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000)
+
+---
+
+## 📱 Mobile (Flutter) Setup
 
 ```bash
-npm start
-```
+cd mobile-flutter
+flutter pub get
+flutter run
 
-The frontend will run locally on:
-
-```
-http://localhost:3000
-```
----
-
-# Database Tables
-
-The system automatically creates the following tables:
-
-### User System
-
-* user
-* Buyer
-* Artisan
-
-### Portfolio
-
-* PortfolioProjects
-* Gallery
-
-### Marketplace
-
-* MarketItem
-* Order
-* OrderItem
-
-### Custom Requests
-
-* Request
-* Application
-* Milestone
-
-### Payment & Reviews
-
-* Payment
-* Review
-
----
-
-# API Testing
-
-The backend API can be tested using:
-
-* Postman
-
-Example endpoints:
-
-```
-POST /auth/register
-POST /auth/login
-
-GET /portfolioProjects
-POST /portfolioProjects
-
-GET /user
-PUT /user/:id
-DELETE /user/:id
 ```
 
 ---
 
-# Features
+## 💾 Database Tables
 
-### Buyer Features
+The system auto-creates the following architecture:
+
+* **User System:** `user`, `Buyer`, `Artisan`
+* **Portfolio:** `PortfolioProjects`, `Gallery`
+* **Marketplace:** `MarketItem`, `Order`, `OrderItem`
+* **Custom Requests:** `Request`, `Application`, `Milestone`
+* **Payments & Reviews:** `Payment`, `Review`
+
+---
+
+## ✨ Features
+
+<details>
+<summary>Buyer Features</summary>
 
 * Create custom requests
 * Order artisan products
 * Leave reviews and ratings
 
-### Artisan Features
+</details>
+
+<details>
+<summary>Artisan Features</summary>
 
 * Create portfolio projects
 * Upload gallery images
-* Sell products in the marketplace
+* Sell products in marketplace
 * Apply to buyer requests
 
-### Platform Features
-
-* Milestone-based project workflow
-* Escrow payment system
-* Product ordering system
-* Review and rating system
+</details>
 
 ---
 
-# Future Improvements
-
-* JWT authentication
-* Image upload system
-* Payment gateway integration
-* Notifications system
-* Admin dashboard
-* API documentation
-
----
-
-# Prototype link
+# 🎨 Prototype
 
 <div align="center">
-  <h1>🎨 CURIO</h1>
-  <p><strong>A Full Stack Marketplace Platform Connecting Buyers and Artisans</strong></p>
-  
-  [![Figma Prototype](https://img.shields.io/badge/Figma-Prototype-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/proto/UzAp7JCpZQc9DbDfvPjtnR/Egyptique?node-id=29-405&t=Ocdo2nqffXSr8q49-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=10%3A837&show-proto-sidebar=1)
+[![🚀 Launch Prototype](https://img.shields.io/badge/🚀%20Launch-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/proto/UzAp7JCpZQc9DbDfvPjtnR/Egyptique?node-id=29-405&t=Ocdo2nqffXSr8q49-1)
 </div>
 
 ---
-# 👥 Authors
 
-* Jana Hagars
+## 👥 Authors
 
-* Youssef Ahmed
-
-* Adham Baher
-
-* Anas Mohammed
-
-* Ahmed Abdelrehim
+**Jana Hagars | Youssef Ahmed | Adham Baher | Anas Mohammed | Ahmed Abdelrehim**
 
 ---
+
