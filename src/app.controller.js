@@ -5,6 +5,7 @@ import cors from "cors";
 //  Import your module routers 
 import authRouter from "./modules/auth/auth.controller.js";
 import userRouter from "./modules/user/user.controller.js";
+import portfolioRouter from "./modules/portfolioProjects/portfolioProjects.controller.js";
 
 export const bootstrap = () => {
   const app = express();
@@ -15,6 +16,7 @@ export const bootstrap = () => {
 
   app.use("/auth", authRouter);
   app.use("/user", userRouter);
+  app.use("/portfolio", portfolioRouter);
 
   app.use((req, res) => {
     res.status(404).json({ ok: false, message: "Route not found" });
