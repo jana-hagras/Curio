@@ -238,7 +238,7 @@ DELETE /user/:id
 
 ---
 
-# Prototype link:
+# Prototype link
 
 <div align="center">
   <h1>🎨 CURIO</h1>
@@ -248,12 +248,16 @@ DELETE /user/:id
 </div>
 
 ---
-# Authors
+# 👥 Authors
 
 Jana Hagars
+
 Youssef Ahmed
+
 Adham Baher
+
 Anas Mohammed
-Ahmed Abdelrehim 
+
+Ahmed Abdelrehim
 
 ---
