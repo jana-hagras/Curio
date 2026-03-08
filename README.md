@@ -92,7 +92,7 @@ npm start
 or
 
 ```bash
-node server.js
+node index.js
 ```
 
 The backend will start and automatically:
@@ -186,8 +186,6 @@ The system automatically creates the following tables:
 The backend API can be tested using:
 
 * Postman
-* Thunder Client
-* Insomnia
 
 Example endpoints:
 
@@ -239,9 +237,17 @@ DELETE /user/:id
 * API documentation
 
 ---
-# Prototype link:
-https://www.figma.com/proto/UzAp7JCpZQc9DbDfvPjtnR/Egyptique?node-id=29-405&t=Ocdo2nqffXSr8q49-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=10%3A837&show-proto-sidebar=1
 
+# Prototype link:
+
+<div align="center">
+  <h1>🎨 CURIO</h1>
+  <p><strong>A Full Stack Marketplace Platform Connecting Buyers and Artisans</strong></p>
+  
+  [![Figma Prototype](https://img.shields.io/badge/Figma-Prototype-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/proto/UzAp7JCpZQc9DbDfvPjtnR/Egyptique?node-id=29-405&t=Ocdo2nqffXSr8q49-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=10%3A837&show-proto-sidebar=1)
+</div>
+
+---
 # Authors
 
 Jana Hagars
@@ -251,7 +257,3 @@ Anas Mohammed
 Ahmed Abdelrehim 
 
 ---
-
-# License
-
-This project is created for educational and development purposes.
