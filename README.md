@@ -171,11 +171,13 @@ The system auto-creates the following architecture:
 
 ---
 
-# 🎨 Prototype
+## 🎨 Prototype
 
-<div align="center">
-[![🚀 Launch Prototype](https://img.shields.io/badge/🚀%20Launch-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/proto/UzAp7JCpZQc9DbDfvPjtnR/Egyptique?node-id=29-405&t=Ocdo2nqffXSr8q49-1)
-</div>
+<p align="center">
+  <a href="https://www.figma.com/proto/UzAp7JCpZQc9DbDfvPjtnR/Egyptique?node-id=29-405&t=Ocdo2nqffXSr8q49-1">
+    <img src="https://img.shields.io/badge/%20Launch%20Prototype-8A2BE2?style=for-the-badge&logo=figma&logoColor=white&labelColor=0d1117"/>
+  </a>
+</p>
 
 ---
 
