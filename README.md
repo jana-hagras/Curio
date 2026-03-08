@@ -249,14 +249,14 @@ DELETE /user/:id
 ---
 # 👥 Authors
 
-Jana Hagars
+* Jana Hagars
 
-Youssef Ahmed
+* Youssef Ahmed
 
-Adham Baher
+* Adham Baher
 
-Anas Mohammed
+* Anas Mohammed
 
-Ahmed Abdelrehim
+* Ahmed Abdelrehim
 
 ---
