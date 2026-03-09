@@ -91,7 +91,7 @@ npm start
 
 *The database and tables are automatically created on the first run if your MySQL credentials are set.*
 
----
+
 ---
 
 # node_modules Folder
@@ -109,7 +109,7 @@ npm install
 This command reads the dependencies from `package.json` and downloads them.
 
 
-```
+
 ---
 
 ## 🌐 Frontend (React) Setup
