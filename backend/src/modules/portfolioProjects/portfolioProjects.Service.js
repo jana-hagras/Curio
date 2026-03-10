@@ -106,7 +106,7 @@ export const updateProject = async (req, res, next) => {
 
     await pool.query(
       "UPDATE PortfolioProjects SET ProjectName=COALESCE(?, ProjectName), Description=COALESCE(?, Description), Artisan_id=COALESCE(?, Artisan_id) WHERE Project_id=?",
-      [projectName, description, artisan_id, projectId]
+      [projectName ?? null, description ?? null, artisan_id ?? null, projectId]
     );
 
     return getProjectById(req, res, next);

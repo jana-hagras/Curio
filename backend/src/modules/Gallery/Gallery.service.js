@@ -98,7 +98,7 @@ export const updateGallery = async (req, res, next) => {
        SET Image = COALESCE(?, Image),
            Caption = COALESCE(?, Caption)
        WHERE Image_id = ?`,
-      [Image, Caption, Image_id]
+      [Image ?? null, Caption ?? null, Image_id]
     );
 
     const [rows] = await pool.query(
