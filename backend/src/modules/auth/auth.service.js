@@ -53,16 +53,16 @@ export const register = async (req, res, next) => {
       const [userRes] = await conn.query(
         `INSERT INTO user (FName, MName, LName, Email, Password, Phone, Address, Type, JoinDate) 
           VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_DATE)`,
-        [fName, mName, lName, email, hashedPassword, phone, address, type]
+        [fName ?? null, mName ?? null, lName ?? null, email, hashedPassword, phone ?? null, address ?? null, type]
       );
 
       const userId = userRes.insertId;
 
       // 2. Insert into Subtype table
       if (type === 'Buyer') {
-        await conn.query("INSERT INTO Buyer (Buyer_id, Country) VALUES (?, ?)", [userId, country]);
+        await conn.query("INSERT INTO Buyer (Buyer_id, Country) VALUES (?, ?)", [userId, country ?? null]);
       } else {
-        await conn.query("INSERT INTO Artisan (Artisan_id, Bio, Status) VALUES (?, ?, 'Active')", [userId, bio]);
+        await conn.query("INSERT INTO Artisan (Artisan_id, Bio, Status) VALUES (?, ?, 'Active')", [userId, bio ?? null]);
       }
 
       await conn.commit();

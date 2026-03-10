@@ -99,14 +99,14 @@ export const updateUser = async (req, res, next) => {
       // Update Base User
       await conn.query(
         "UPDATE user SET FName=COALESCE(?, FName), MName=COALESCE(?, MName), LName=COALESCE(?, LName), Address=COALESCE(?, Address), Phone=COALESCE(?, Phone), ProfileImage=COALESCE(?, ProfileImage) WHERE User_id=?",
-        [fName, mName, lName, address, phone, profileImage, userId]
+        [fName ?? null, mName ?? null, lName ?? null, address ?? null, phone ?? null, profileImage ?? null, userId]
       );
 
       // Update Subtype
       if (user.Type === 'Buyer') {
-        await conn.query("UPDATE Buyer SET Country=COALESCE(?, Country) WHERE Buyer_id=?", [country, userId]);
+        await conn.query("UPDATE Buyer SET Country=COALESCE(?, Country) WHERE Buyer_id=?", [country ?? null, userId]);
       } else {
-        await conn.query("UPDATE Artisan SET Bio=COALESCE(?, Bio), Status=COALESCE(?, Status) WHERE Artisan_id=?", [bio, status, userId]);
+        await conn.query("UPDATE Artisan SET Bio=COALESCE(?, Bio), Status=COALESCE(?, Status) WHERE Artisan_id=?", [bio ?? null, status ?? null, userId]);
       }
 
       await conn.commit();
