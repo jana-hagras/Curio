@@ -103,7 +103,7 @@ This folder is **not included in the repository** because it can be very large.
 Instead, it is automatically created by running:
 
 ```bash
-npm install
+npm install express-mysql-session --save
 ````
 
 This command reads the dependencies from `package.json` and downloads them.
