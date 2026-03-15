@@ -8,6 +8,7 @@
 ---
 
 **CURIO** is a **Full Stack Marketplace Platform** connecting **buyers and artisans**.  
+
 Buyers request custom handmade products, while artisans showcase, sell, and apply to requests.  
 
 The platform supports multiple clients, including a **React-based Web App** and **Flutter Mobile App**, all powered by a centralized Node.js/MySQL backend.
