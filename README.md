@@ -183,7 +183,7 @@ The system auto-creates the following architecture:
 
 ## 👥 Authors
 
-**Jana Hagars | Youssef Ahmed | Adham Baher | Anas Mohammed | Ahmed Abdelrehim**
+**Jana Hagras | Youssef Ahmed | Adham Baher | Anas Mohammed | Ahmed Abdelrehim**
 
 ---
 
