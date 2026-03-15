@@ -42,7 +42,7 @@ The platform supports multiple clients, including a **React-based Web App** and 
 
 ### Frontend & Mobile
 * **Web:** React.js
-* **Mobile:** Flutter / React Native
+* **Mobile:** Flutter
 
 ---
 
