@@ -6,6 +6,7 @@ const router = Router();
 router.post("/", Application.createApplication);
 router.get("/request", Application.getApplicationsByRequest);
 router.get("/artisan", Application.getApplicationsByArtisan);
+router.get('/search',Application.searchApplications);
 router.get("/", Application.getApplicationById);
 router.put("/", Application.updateApplication);
 router.delete("/", Application.deleteApplication);

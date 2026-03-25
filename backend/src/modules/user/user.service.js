@@ -1,7 +1,9 @@
 import pool from "../../db/connection.js";
 
+// 🔹 Helper to shape user response
 const sanitizeUser = (row) => {
   if (!row) return null;
+
   return {
     id: row.User_id,
     firstName: row.FName,
@@ -25,7 +27,63 @@ const sanitizeUser = (row) => {
 };
 
 
-// READ ALL
+
+// =============================
+// 🔍 SEARCH USERS (NEW)
+// =============================
+export const searchUsers = async (req, res, next) => {
+  try {
+    const value = req.query.value;
+
+    if (!value) {
+      return res.status(400).json({
+        ok: false,
+        message: "Search value is required"
+      });
+    }
+
+    const searchValue = `%${value}%`;
+
+    const query = `
+      SELECT u.*, b.Country, a.Bio, a.Status, a.Verified 
+      FROM user u
+      LEFT JOIN Buyer b ON u.User_id = b.Buyer_id
+      LEFT JOIN Artisan a ON u.User_id = a.Artisan_id
+      WHERE 
+        u.FName LIKE ?
+        OR u.MName LIKE ?
+        OR u.LName LIKE ?
+        OR u.Email LIKE ?
+        OR u.Phone LIKE ?
+        OR u.Address LIKE ?
+        OR u.Type LIKE ?          
+        OR b.Country LIKE ?
+        OR a.Bio LIKE ?
+        OR a.Status LIKE ?
+      ORDER BY u.User_id ASC
+    `;
+
+    const values = Array(10).fill(searchValue); // 🔥 updated count
+
+    const [rows] = await pool.query(query, values);
+
+    return res.status(200).json({
+      ok: true,
+      data: {
+        users: rows.map(sanitizeUser)
+      }
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+
+// =============================
+// 📄 GET ALL USERS
+// =============================
 export const getAllUsers = async (req, res, next) => {
   try {
     const query = `
@@ -33,13 +91,28 @@ export const getAllUsers = async (req, res, next) => {
       FROM user u
       LEFT JOIN Buyer b ON u.User_id = b.Buyer_id
       LEFT JOIN Artisan a ON u.User_id = a.Artisan_id
+      ORDER BY u.User_id ASC
     `;
+
     const [rows] = await pool.query(query);
-    return res.status(200).json({ ok: true, data: { users: rows.map(sanitizeUser) } });
-  } catch (err) { next(err); }
+
+    return res.status(200).json({
+      ok: true,
+      data: {
+        users: rows.map(sanitizeUser)
+      }
+    });
+
+  } catch (err) {
+    next(err);
+  }
 };
 
-// READ ONE
+
+
+// =============================
+// 📄 GET USER BY ID
+// =============================
 export const getUserById = async (req, res, next) => {
   try {
     const userId = Number(req.query.id);
@@ -62,19 +135,29 @@ export const getUserById = async (req, res, next) => {
     const [rows] = await pool.query(query, [userId]);
 
     if (!rows.length) {
-      return res.status(404).json({ ok: false, message: "User not found." });
+      return res.status(404).json({
+        ok: false,
+        message: "User not found."
+      });
     }
 
     return res.status(200).json({
       ok: true,
-      data: { user: sanitizeUser(rows[0]) }
+      data: {
+        user: sanitizeUser(rows[0])
+      }
     });
+
   } catch (err) {
     next(err);
   }
 };
 
-// UPDATE
+
+
+// =============================
+// ✏️ UPDATE USER
+// =============================
 export const updateUser = async (req, res, next) => {
   try {
     const userId = Number(req.query.id);
@@ -88,39 +171,76 @@ export const updateUser = async (req, res, next) => {
 
     const { fName, mName, lName, address, phone, profileImage, country, bio, status } = req.body;
 
-    const [userRows] = await pool.query("SELECT Type FROM user WHERE User_id = ?", [userId]);
-    if (!userRows.length) return res.status(404).json({ ok: false, message: "User not found." });
+    const [userRows] = await pool.query(
+      "SELECT Type FROM user WHERE User_id = ?",
+      [userId]
+    );
+
+    if (!userRows.length) {
+      return res.status(404).json({
+        ok: false,
+        message: "User not found."
+      });
+    }
+
     const user = userRows[0];
 
     const conn = await pool.getConnection();
+
     try {
       await conn.beginTransaction();
 
-      // Update Base User
+      // 🔹 Update base user
       await conn.query(
-        "UPDATE user SET FName=COALESCE(?, FName), MName=COALESCE(?, MName), LName=COALESCE(?, LName), Address=COALESCE(?, Address), Phone=COALESCE(?, Phone), ProfileImage=COALESCE(?, ProfileImage) WHERE User_id=?",
+        `UPDATE user 
+         SET FName=COALESCE(?, FName),
+             MName=COALESCE(?, MName),
+             LName=COALESCE(?, LName),
+             Address=COALESCE(?, Address),
+             Phone=COALESCE(?, Phone),
+             ProfileImage=COALESCE(?, ProfileImage)
+         WHERE User_id=?`,
         [fName ?? null, mName ?? null, lName ?? null, address ?? null, phone ?? null, profileImage ?? null, userId]
       );
 
-      // Update Subtype
+      // 🔹 Update subtype
       if (user.Type === 'Buyer') {
-        await conn.query("UPDATE Buyer SET Country=COALESCE(?, Country) WHERE Buyer_id=?", [country ?? null, userId]);
+        await conn.query(
+          "UPDATE Buyer SET Country=COALESCE(?, Country) WHERE Buyer_id=?",
+          [country ?? null, userId]
+        );
       } else {
-        await conn.query("UPDATE Artisan SET Bio=COALESCE(?, Bio), Status=COALESCE(?, Status) WHERE Artisan_id=?", [bio ?? null, status ?? null, userId]);
+        await conn.query(
+          `UPDATE Artisan 
+           SET Bio=COALESCE(?, Bio),
+               Status=COALESCE(?, Status)
+           WHERE Artisan_id=?`,
+          [bio ?? null, status ?? null, userId]
+        );
       }
 
       await conn.commit();
+
+      // Return updated user
       return getUserById(req, res, next);
+
     } catch (e) {
       await conn.rollback();
       throw e;
     } finally {
       conn.release();
     }
-  } catch (err) { next(err); }
+
+  } catch (err) {
+    next(err);
+  }
 };
 
-// DELETE
+
+
+// =============================
+// ❌ DELETE USER
+// =============================
 export const deleteUser = async (req, res, next) => {
   try {
     const userId = Number(req.query.id);
@@ -131,8 +251,25 @@ export const deleteUser = async (req, res, next) => {
         message: "Query parameter 'id' is required."
       });
     }
-    const [result] = await pool.query("DELETE FROM user WHERE User_id = ?", [userId]);
-    if (result.affectedRows === 0) return res.status(404).json({ ok: false, message: "User not found." });
-    return res.status(200).json({ ok: true, message: "User deleted successfully." });
-  } catch (err) { next(err); }
+
+    const [result] = await pool.query(
+      "DELETE FROM user WHERE User_id = ?",
+      [userId]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        ok: false,
+        message: "User not found."
+      });
+    }
+
+    return res.status(200).json({
+      ok: true,
+      message: "User deleted successfully."
+    });
+
+  } catch (err) {
+    next(err);
+  }
 };

@@ -20,6 +20,51 @@ const APP_QUERY = `
   LEFT JOIN user u ON a.Artisan_id = u.User_id
 `;
 
+// =============================
+// 🔍 SEARCH APPLICATIONS (NEW)
+// =============================
+export const searchApplications = async (req, res, next) => {
+  try {
+    const value = req.query.value;
+
+    if (!value) {
+      return res.status(400).json({
+        ok: false,
+        message: "Search value is required"
+      });
+    }
+
+    const searchValue = `%${value}%`;
+
+    const query = `
+      ${APP_QUERY}
+      WHERE 
+        ap.Application_id LIKE ?
+        OR ap.Request_id LIKE ?
+        OR ap.Artisan_id LIKE ?
+        OR ap.Proposal LIKE ?
+        OR ap.Status LIKE ?
+        OR ap.ApplicationDate LIKE ?
+        OR u.FName LIKE ?
+        OR u.LName LIKE ?
+    `;
+
+    const values = Array(8).fill(searchValue);
+
+    const [rows] = await pool.query(query, values);
+
+    return res.status(200).json({
+      ok: true,
+      data: {
+        applications: rows.map(sanitizeApplication)
+      }
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};
+
 // CREATE
 export const createApplication = async (req, res, next) => {
   try {

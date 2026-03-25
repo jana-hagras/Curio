@@ -19,6 +19,53 @@ const ORDER_QUERY = `
   LEFT JOIN user u ON b.Buyer_id = u.User_id
 `;
 
+
+// =============================
+// 🔍 SEARCH ORDERS (NEW)
+// =============================
+export const searchOrders = async (req, res, next) => {
+  try {
+    const value = req.query.value;
+
+    if (!value) {
+      return res.status(400).json({
+        ok: false,
+        message: "Search value is required"
+      });
+    }
+
+    const searchValue = `%${value}%`;
+
+    const query = `
+      ${ORDER_QUERY}
+      WHERE 
+        o.Order_id LIKE ?
+        OR o.Buyer_id LIKE ?
+        OR o.OrderDate LIKE ?
+        OR o.DeliveryAddress LIKE ?
+        OR o.Status LIKE ?
+        OR u.FName LIKE ?
+        OR u.LName LIKE ?
+    `;
+
+    const values = Array(7).fill(searchValue);
+
+    const [rows] = await pool.query(query, values);
+
+    return res.status(200).json({
+      ok: true,
+      data: {
+        orders: rows.map(sanitizeOrder)
+      }
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+
 // CREATE
 export const createOrder = async (req, res, next) => {
   try {
