@@ -127,3 +127,16 @@ export const updatePayment = async (req, res, next) => {
     return getPaymentById(req, res, next);
   } catch (err) { next(err); }
 };
+
+// DELETE
+export const deletePayment = async (req, res, next) => {
+  try {
+    const id = Number(req.query.id);
+    if (!id) return res.status(400).json({ ok: false, message: "Query parameter 'id' is required." });
+
+    const [result] = await pool.query("DELETE FROM Payment WHERE Payment_id = ?", [id]);
+    if (result.affectedRows === 0) return res.status(404).json({ ok: false, message: "Payment not found." });
+
+    return res.status(200).json({ ok: true, message: "Payment deleted successfully." });
+  } catch (err) { next(err); }
+};
