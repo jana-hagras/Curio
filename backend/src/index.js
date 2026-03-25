@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { bootstrap } from "./app.controller.js";
-import { initDatabase } from "./db/setupdb.js";
+import { initDatabase } from "./db/connection.js";
 
 const start = async () => {
     try {

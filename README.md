@@ -8,6 +8,7 @@
 ---
 
 **CURIO** is a **Full Stack Marketplace Platform** connecting **buyers and artisans**.  
+
 Buyers request custom handmade products, while artisans showcase, sell, and apply to requests.  
 
 The platform supports multiple clients, including a **React-based Web App** and **Flutter Mobile App**, all powered by a centralized Node.js/MySQL backend.
@@ -41,7 +42,7 @@ The platform supports multiple clients, including a **React-based Web App** and 
 
 ### Frontend & Mobile
 * **Web:** React.js
-* **Mobile:** Flutter / React Native
+* **Mobile:** Flutter
 
 ---
 
@@ -183,7 +184,7 @@ The system auto-creates the following architecture:
 
 ## 👥 Authors
 
-**Jana Hagars | Youssef Ahmed | Adham Baher | Anas Mohammed | Ahmed Abdelrehim**
+**Jana Hagras | Youssef Ahmed | Adham Baher | Anas Mohammed | Ahmed Abdelrehim**
 
 ---
 

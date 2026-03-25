@@ -59,3 +59,23 @@ export const deleteOrderItem = async (req, res, next) => {
     return res.status(200).json({ ok: true, message: "Order item removed successfully." });
   } catch (err) { next(err); }
 };
+
+// UPDATE
+export const updateOrderItem = async (req, res, next) => {
+  try {
+    const id = Number(req.query.id);
+    if (!id) return res.status(400).json({ ok: false, message: "Query parameter 'id' is required." });
+
+    const { quantity } = req.body;
+    if (!quantity) return res.status(400).json({ ok: false, message: "Field 'quantity' is required." });
+
+    const [result] = await pool.query(
+      "UPDATE OrderItem SET Quantity = ? WHERE OrderItem_id = ?",
+      [quantity, id]
+    );
+    if (result.affectedRows === 0) return res.status(404).json({ ok: false, message: "Order item not found." });
+
+    const [rows] = await pool.query(`${OI_QUERY} WHERE oi.OrderItem_id = ?`, [id]);
+    return res.status(200).json({ ok: true, data: { orderItem: sanitizeOrderItem(rows[0]) } });
+  } catch (err) { next(err); }
+};

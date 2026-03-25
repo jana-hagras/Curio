@@ -23,6 +23,51 @@ const ITEM_QUERY = `
   LEFT JOIN user u ON a.Artisan_id = u.User_id
 `;
 
+// =============================
+// 🔍 SEARCH MARKET ITEMS (NEW)
+// =============================
+export const searchItems = async (req, res, next) => {
+  try {
+    const value = req.query.value;
+
+    if (!value) {
+      return res.status(400).json({
+        ok: false,
+        message: "Search value is required"
+      });
+    }
+
+    const searchValue = `%${value}%`;
+
+    const query = `
+      ${ITEM_QUERY}
+      WHERE 
+        mi.Item_id LIKE ?
+        OR mi.Artisan_id LIKE ?
+        OR mi.Item LIKE ?
+        OR mi.Description LIKE ?
+        OR mi.Category LIKE ?
+        OR mi.Price LIKE ?
+        OR u.FName LIKE ?
+        OR u.LName LIKE ?
+    `;
+
+    const values = Array(8).fill(searchValue);
+
+    const [rows] = await pool.query(query, values);
+
+    return res.status(200).json({
+      ok: true,
+      data: {
+        items: rows.map(sanitizeItem)
+      }
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};
+
 // CREATE
 export const createItem = async (req, res, next) => {
   try {
