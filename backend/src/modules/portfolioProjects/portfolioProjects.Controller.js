@@ -3,6 +3,7 @@ import * as Portfolio from "./portfolioProjects.Service.js";
 
 const router = Router();
 
+router.get("/search", Portfolio.searchProjects);
 router.post("/", Portfolio.createProject);     // Create
 router.get("/all", Portfolio.getAllProjects);  // Get all projects
 router.get("/", Portfolio.getProjectById);     // Get single project by ?id

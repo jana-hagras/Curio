@@ -11,6 +11,47 @@ const sanitizeGallery = (row) => {
   };
 };
 
+// =============================
+// 🔍 SEARCH GALLERY
+// =============================
+export const searchGallery = async (req, res, next) => {
+  try {
+    const value = req.query.value;
+
+    if (!value) {
+      return res.status(400).json({
+        ok: false,
+        message: "Search value is required"
+      });
+    }
+
+    const searchValue = `%${value}%`;
+
+    const query = `
+      SELECT * FROM Gallery
+      WHERE 
+        Image_id LIKE ?
+        OR Project_id LIKE ?
+        OR Image LIKE ?
+        OR Caption LIKE ?
+    `;
+
+    const values = Array(4).fill(searchValue);
+
+    const [rows] = await pool.query(query, values);
+
+    return res.status(200).json({
+      ok: true,
+      data: {
+        gallery: rows.map(sanitizeGallery)
+      }
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};
+
 // CREATE IMAGE
 export const createGallery = async (req, res, next) => {
   try {

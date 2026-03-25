@@ -14,6 +14,51 @@ const sanitizeMilestone = (row) => {
   };
 };
 
+// =============================
+// 🔍 SEARCH MILESTONES
+// =============================
+export const searchMilestones = async (req, res, next) => {
+  try {
+    const value = req.query.value;
+
+    if (!value) {
+      return res.status(400).json({
+        ok: false,
+        message: "Search value is required"
+      });
+    }
+
+    const searchValue = `%${value}%`;
+
+    const query = `
+      SELECT * FROM Milestone
+      WHERE 
+        Milestone_id LIKE ?
+        OR Request_id LIKE ?
+        OR Title LIKE ?
+        OR Description LIKE ?
+        OR DueDate LIKE ?
+        OR EscrowAmount LIKE ?
+        OR EscrowReleaseDate LIKE ?
+        OR Status LIKE ?
+    `;
+
+    const values = Array(8).fill(searchValue);
+
+    const [rows] = await pool.query(query, values);
+
+    return res.status(200).json({
+      ok: true,
+      data: {
+        milestones: rows.map(sanitizeMilestone)
+      }
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};
+
 // CREATE
 export const createMilestone = async (req, res, next) => {
   try {

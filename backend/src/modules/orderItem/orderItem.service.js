@@ -18,6 +18,49 @@ const OI_QUERY = `
   LEFT JOIN MarketItem mi ON oi.Item_id = mi.Item_id
 `;
 
+// =============================
+// 🔍 SEARCH ORDER ITEMS
+// =============================
+export const searchOrderItems = async (req, res, next) => {
+  try {
+    const value = req.query.value;
+
+    if (!value) {
+      return res.status(400).json({
+        ok: false,
+        message: "Search value is required"
+      });
+    }
+
+    const searchValue = `%${value}%`;
+
+    const query = `
+      ${OI_QUERY}
+      WHERE 
+        oi.OrderItem_id LIKE ?
+        OR oi.Order_id LIKE ?
+        OR oi.Item_id LIKE ?
+        OR oi.Quantity LIKE ?
+        OR mi.Item LIKE ?
+        OR mi.Price LIKE ?
+    `;
+
+    const values = Array(6).fill(searchValue);
+
+    const [rows] = await pool.query(query, values);
+
+    return res.status(200).json({
+      ok: true,
+      data: {
+        orderItems: rows.map(sanitizeOrderItem)
+      }
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};
+
 // CREATE (add item to order)
 export const createOrderItem = async (req, res, next) => {
   try {

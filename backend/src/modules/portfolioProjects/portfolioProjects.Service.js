@@ -13,6 +13,56 @@ const sanitizeProject = (row) => {
   };
 };
 
+const PROJ_QUERY = `
+  SELECT p.*, u.FName, u.LName
+  FROM PortfolioProjects p
+  LEFT JOIN Artisan a ON p.Artisan_id = a.Artisan_id
+  LEFT JOIN user u ON a.Artisan_id = u.User_id
+`;
+
+// =============================
+// 🔍 SEARCH PROJECTS
+// =============================
+export const searchProjects = async (req, res, next) => {
+  try {
+    const value = req.query.value;
+
+    if (!value) {
+      return res.status(400).json({
+        ok: false,
+        message: "Search value is required"
+      });
+    }
+
+    const searchValue = `%${value}%`;
+
+    const query = `
+      ${PROJ_QUERY}
+      WHERE 
+        p.Project_id LIKE ?
+        OR p.ProjectName LIKE ?
+        OR p.Description LIKE ?
+        OR p.Artisan_id LIKE ?
+        OR u.FName LIKE ?
+        OR u.LName LIKE ?
+    `;
+
+    const values = Array(6).fill(searchValue);
+
+    const [rows] = await pool.query(query, values);
+
+    return res.status(200).json({
+      ok: true,
+      data: {
+        projects: rows.map(sanitizeProject)
+      }
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};
+
 // CREATE
 export const createProject = async (req, res, next) => {
   try {

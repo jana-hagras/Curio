@@ -13,6 +13,50 @@ const sanitizePayment = (row) => {
   };
 };
 
+// =============================
+// 🔍 SEARCH PAYMENTS
+// =============================
+export const searchPayments = async (req, res, next) => {
+  try {
+    const value = req.query.value;
+
+    if (!value) {
+      return res.status(400).json({
+        ok: false,
+        message: "Search value is required"
+      });
+    }
+
+    const searchValue = `%${value}%`;
+
+    const query = `
+      SELECT * FROM Payment
+      WHERE 
+        Payment_id LIKE ?
+        OR Order_id LIKE ?
+        OR Request_id LIKE ?
+        OR TotalAmount LIKE ?
+        OR PaymentMethod LIKE ?
+        OR TransactionDate LIKE ?
+        OR Status LIKE ?
+    `;
+
+    const values = Array(7).fill(searchValue);
+
+    const [rows] = await pool.query(query, values);
+
+    return res.status(200).json({
+      ok: true,
+      data: {
+        payments: rows.map(sanitizePayment)
+      }
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};
+
 // CREATE
 export const createPayment = async (req, res, next) => {
   try {

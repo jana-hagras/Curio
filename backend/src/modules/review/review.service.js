@@ -23,6 +23,53 @@ const REVIEW_QUERY = `
   LEFT JOIN MarketItem mi ON rv.Item_id = mi.Item_id
 `;
 
+// =============================
+// 🔍 SEARCH REVIEWS
+// =============================
+export const searchReviews = async (req, res, next) => {
+  try {
+    const value = req.query.value;
+
+    if (!value) {
+      return res.status(400).json({
+        ok: false,
+        message: "Search value is required"
+      });
+    }
+
+    const searchValue = `%${value}%`;
+
+    const query = `
+      ${REVIEW_QUERY}
+      WHERE 
+        rv.Review_id LIKE ?
+        OR rv.Buyer_id LIKE ?
+        OR rv.Item_id LIKE ?
+        OR rv.Rating LIKE ?
+        OR rv.Comment LIKE ?
+        OR rv.Attachment LIKE ?
+        OR rv.ReviewDate LIKE ?
+        OR u.FName LIKE ?
+        OR u.LName LIKE ?
+        OR mi.Item LIKE ?
+    `;
+
+    const values = Array(10).fill(searchValue);
+
+    const [rows] = await pool.query(query, values);
+
+    return res.status(200).json({
+      ok: true,
+      data: {
+        reviews: rows.map(sanitizeReview)
+      }
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};
+
 // CREATE
 export const createReview = async (req, res, next) => {
   try {

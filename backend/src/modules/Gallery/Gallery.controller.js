@@ -3,6 +3,7 @@ import * as Gallery from "./Gallery.service.js";
 
 const router = Router();
 
+router.get("/search", Gallery.searchGallery);
 router.post("/", Gallery.createGallery);        // Create image
 router.get("/all", Gallery.getAllImages);       // Get all images
 router.get("/", Gallery.getGalleryByProject);  // Get images by project_id via ?id=

@@ -22,6 +22,53 @@ const REQ_QUERY = `
   LEFT JOIN user u ON b.Buyer_id = u.User_id
 `;
 
+// =============================
+// 🔍 SEARCH REQUESTS
+// =============================
+export const searchRequests = async (req, res, next) => {
+  try {
+    const value = req.query.value;
+
+    if (!value) {
+      return res.status(400).json({
+        ok: false,
+        message: "Search value is required"
+      });
+    }
+
+    const searchValue = `%${value}%`;
+
+    const query = `
+      ${REQ_QUERY}
+      WHERE 
+        r.Request_id LIKE ?
+        OR r.Buyer_id LIKE ?
+        OR r.Title LIKE ?
+        OR r.Description LIKE ?
+        OR r.Request_Date LIKE ?
+        OR r.Budget LIKE ?
+        OR r.\`3D_Model\` LIKE ?
+        OR r.Category LIKE ?
+        OR u.FName LIKE ?
+        OR u.LName LIKE ?
+    `;
+
+    const values = Array(10).fill(searchValue);
+
+    const [rows] = await pool.query(query, values);
+
+    return res.status(200).json({
+      ok: true,
+      data: {
+        requests: rows.map(sanitizeRequest)
+      }
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};
+
 // CREATE
 export const createRequest = async (req, res, next) => {
   try {
