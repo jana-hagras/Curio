@@ -11,11 +11,4 @@ const pool = mysql.createPool({
     multipleStatements: true,
 });
 
-// Function to test database connection
-export const initDatabase = async () => {
-    const connection = await pool.getConnection();
-    console.log("Connected to MySQL ✅");
-    connection.release();
-};
-
 export default pool;
