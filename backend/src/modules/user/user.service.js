@@ -2,9 +2,12 @@ import pool from "../../db/connection.js";
 import bcrypt from "bcrypt";
 
 const SALT_ROUNDS = 10;
+
 const normalizeEmail = (email) => String(email || "").trim().toLowerCase();
 
-// 🔹 Helper to shape user response
+// ----------------------------
+// Shape user response
+// ----------------------------
 const sanitizeUser = (row) => {
   if (!row) return null;
 
@@ -20,56 +23,130 @@ const sanitizeUser = (row) => {
     joinDate: row.JoinDate,
     profileImage: row.ProfileImage,
 
-    // Specialized data
-    ...(row.Type === 'Buyer' && { country: row.Country }),
-    ...(row.Type === 'Artisan' && {
+    ...(row.Type === "Buyer" && {
+      country: row.Country,
+    }),
+
+    ...(row.Type === "Artisan" && {
       bio: row.Bio,
       status: row.Status,
-      verified: !!row.Verified
-    })
+      verified: !!row.Verified,
+    }),
   };
 };
 
-// ------------------------------------
+// ----------------------------
 // REGISTER
-// ------------------------------------
+// ----------------------------
 export const register = async (req, res, next) => {
   try {
-    let { fName, mName, lName, email, password, type, phone, address, country, bio } = req.body;
+    let {
+      fName,
+      mName,
+      lName,
+      email,
+      password,
+      type,
+      phone,
+      address,
+      country,
+      bio,
+    } = req.body;
 
     email = normalizeEmail(email);
-    if (!['Buyer', 'Artisan'].includes(type)) {
-      return res.status(400).json({ ok: false, message: "Type must be 'Buyer' or 'Artisan'." });
+
+    // Required fields
+    if (
+      !String(fName || "").trim() ||
+      !String(mName || "").trim() ||
+      !String(email || "").trim() ||
+      !String(password || "").trim() ||
+      !String(address || "").trim() ||
+      !String(phone || "").trim()
+    ) {
+      return res.status(400).json({
+        ok: false,
+        message:
+          "fName, mName, email, password, address, and phone are required.",
+      });
     }
 
-    // Check availability
-    const [existing] = await pool.query("SELECT User_id FROM user WHERE Email = ? LIMIT 1", [email]);
+    // Email validation
+    if (!email.includes("@")) {
+      return res.status(400).json({
+        ok: false,
+        message: "Invalid email format.",
+      });
+    }
+
+    // Password validation
+    if (password.length < 6) {
+      return res.status(400).json({
+        ok: false,
+        message: "Password must be at least 6 characters.",
+      });
+    }
+
+    // Type validation
+    if (!["Buyer", "Artisan"].includes(type)) {
+      return res.status(400).json({
+        ok: false,
+        message: "Type must be 'Buyer' or 'Artisan'.",
+      });
+    }
+
+    // Check email exists
+    const [existing] = await pool.query(
+      "SELECT User_id FROM user WHERE Email = ? LIMIT 1",
+      [email]
+    );
+
     if (existing.length) {
-      return res.status(409).json({ ok: false, message: "Email already exists." });
+      return res.status(409).json({
+        ok: false,
+        message: "Email already exists.",
+      });
     }
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-    // Transaction to ensure User and Subtype are created together
+    // Transaction
     const conn = await pool.getConnection();
+
     try {
       await conn.beginTransaction();
 
-      // 1. Insert into Supertype table 'user'
+      // Insert user
       const [userRes] = await conn.query(
-        `INSERT INTO user (FName, MName, LName, Email, Password, Phone, Address, Type, JoinDate) 
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_DATE)`,
-        [fName ?? null, mName ?? null, lName ?? null, email, hashedPassword, phone ?? null, address ?? null, type]
+        `INSERT INTO user 
+        (FName, MName, LName, Email, Password, Phone, Address, Type, JoinDate) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_DATE)`,
+        [
+          fName.trim(),
+          mName.trim(),
+          lName ?? null,
+          email,
+          hashedPassword,
+          phone.trim(),
+          address.trim(),
+          type,
+        ]
       );
 
       const userId = userRes.insertId;
 
-      // 2. Insert into Subtype table
-      if (type === 'Buyer') {
-        await conn.query("INSERT INTO Buyer (Buyer_id, Country) VALUES (?, ?)", [userId, country ?? null]);
+      // Insert subtype
+      if (type === "Buyer") {
+        await conn.query(
+          "INSERT INTO Buyer (Buyer_id, Country) VALUES (?, ?)",
+          [userId, country ?? null]
+        );
       } else {
-        await conn.query("INSERT INTO Artisan (Artisan_id, Bio, Status) VALUES (?, ?, 'Active')", [userId, bio ?? null]);
+        await conn.query(
+          "INSERT INTO Artisan (Artisan_id, Bio, Status) VALUES (?, ?, 'Active')",
+          [userId, bio ?? null]
+        );
       }
 
       await conn.commit();
@@ -77,7 +154,7 @@ export const register = async (req, res, next) => {
       return res.status(201).json({
         ok: true,
         message: "Account created successfully.",
-        data: { userId }
+        data: { userId },
       });
     } catch (err) {
       await conn.rollback();
@@ -86,133 +163,65 @@ export const register = async (req, res, next) => {
       conn.release();
     }
   } catch (err) {
-    return next(err);
+    next(err);
   }
 };
 
-// ------------------------------------
+// ----------------------------
 // LOGIN
-// ------------------------------------
+// ----------------------------
 export const login = async (req, res, next) => {
   try {
     let { email, password } = req.body;
+
     email = normalizeEmail(email);
 
-    // Join with both subtypes so we get the full profile regardless of Type
     const query = `
       SELECT u.*, b.Country, a.Bio, a.Status, a.Verified
       FROM user u
       LEFT JOIN Buyer b ON u.User_id = b.Buyer_id
       LEFT JOIN Artisan a ON u.User_id = a.Artisan_id
-      WHERE u.Email = ? LIMIT 1
+      WHERE u.Email = ?
+      LIMIT 1
     `;
 
     const [rows] = await pool.query(query, [email]);
+
     if (!rows.length) {
-      return res.status(401).json({ ok: false, message: "Invalid credentials." });
+      return res.status(401).json({
+        ok: false,
+        message: "Invalid credentials.",
+      });
     }
 
     const match = await bcrypt.compare(password, rows[0].Password);
+
     if (!match) {
-      return res.status(401).json({ ok: false, message: "Invalid credentials." });
+      return res.status(401).json({
+        ok: false,
+        message: "Invalid credentials.",
+      });
     }
 
     return res.status(200).json({
       ok: true,
       message: "Logged in successfully.",
-      data: { user: sanitizeUser(rows[0]) },
-    });
-  } catch (err) {
-    return next(err);
-  }
-};
-
-// ------------------------------------
-// Session Check
-// ------------------------------------
-export const me = async (req, res, next) => {
-  try {
-    const userId = req.params.id;
-    const query = `
-      SELECT u.*, b.Country, a.Bio, a.Status, a.Verified
-      FROM user u
-      LEFT JOIN Buyer b ON u.User_id = b.Buyer_id
-      LEFT JOIN Artisan a ON u.User_id = a.Artisan_id
-      WHERE u.User_id = ?
-    `;
-
-    const [rows] = await pool.query(query, [userId]);
-    if (!rows.length) return res.status(404).json({ ok: false, message: "User not found." });
-
-    return res.status(200).json({
-      ok: true,
-      data: { user: sanitizeUser(rows[0]) },
-    });
-  } catch (err) {
-    return next(err);
-  }
-};
-
-// =============================
-// 🔍 SEARCH USERS (NEW)
-// =============================
-export const searchUsers = async (req, res, next) => {
-  try {
-    const value = req.query.value;
-
-    if (!value) {
-      return res.status(400).json({
-        ok: false,
-        message: "Search value is required"
-      });
-    }
-
-    const searchValue = `%${value}%`;
-
-    const query = `
-      SELECT u.*, b.Country, a.Bio, a.Status, a.Verified 
-      FROM user u
-      LEFT JOIN Buyer b ON u.User_id = b.Buyer_id
-      LEFT JOIN Artisan a ON u.User_id = a.Artisan_id
-      WHERE 
-        u.FName LIKE ?
-        OR u.MName LIKE ?
-        OR u.LName LIKE ?
-        OR u.Email LIKE ?
-        OR u.Phone LIKE ?
-        OR u.Address LIKE ?
-        OR u.Type LIKE ?          
-        OR b.Country LIKE ?
-        OR a.Bio LIKE ?
-        OR a.Status LIKE ?
-      ORDER BY u.User_id ASC
-    `;
-
-    const values = Array(10).fill(searchValue); // 🔥 updated count
-
-    const [rows] = await pool.query(query, values);
-
-    return res.status(200).json({
-      ok: true,
       data: {
-        users: rows.map(sanitizeUser)
-      }
+        user: sanitizeUser(rows[0]),
+      },
     });
-
   } catch (err) {
     next(err);
   }
 };
 
-
-
-// =============================
-// 📄 GET ALL USERS
-// =============================
+// ----------------------------
+// GET ALL USERS
+// ----------------------------
 export const getAllUsers = async (req, res, next) => {
   try {
     const query = `
-      SELECT u.*, b.Country, a.Bio, a.Status, a.Verified 
+      SELECT u.*, b.Country, a.Bio, a.Status, a.Verified
       FROM user u
       LEFT JOIN Buyer b ON u.User_id = b.Buyer_id
       LEFT JOIN Artisan a ON u.User_id = a.Artisan_id
@@ -224,20 +233,17 @@ export const getAllUsers = async (req, res, next) => {
     return res.status(200).json({
       ok: true,
       data: {
-        users: rows.map(sanitizeUser)
-      }
+        users: rows.map(sanitizeUser),
+      },
     });
-
   } catch (err) {
     next(err);
   }
 };
 
-
-
-// =============================
-// 📄 GET USER BY ID
-// =============================
+// ----------------------------
+// GET USER BY ID
+// ----------------------------
 export const getUserById = async (req, res, next) => {
   try {
     const userId = Number(req.query.id);
@@ -245,12 +251,12 @@ export const getUserById = async (req, res, next) => {
     if (!userId) {
       return res.status(400).json({
         ok: false,
-        message: "Query parameter 'id' is required."
+        message: "Query parameter 'id' is required.",
       });
     }
 
     const query = `
-      SELECT u.*, b.Country, a.Bio, a.Status, a.Verified 
+      SELECT u.*, b.Country, a.Bio, a.Status, a.Verified
       FROM user u
       LEFT JOIN Buyer b ON u.User_id = b.Buyer_id
       LEFT JOIN Artisan a ON u.User_id = a.Artisan_id
@@ -262,138 +268,16 @@ export const getUserById = async (req, res, next) => {
     if (!rows.length) {
       return res.status(404).json({
         ok: false,
-        message: "User not found."
+        message: "User not found.",
       });
     }
 
     return res.status(200).json({
       ok: true,
       data: {
-        user: sanitizeUser(rows[0])
-      }
+        user: sanitizeUser(rows[0]),
+      },
     });
-
-  } catch (err) {
-    next(err);
-  }
-};
-
-
-
-// =============================
-// ✏️ UPDATE USER
-// =============================
-export const updateUser = async (req, res, next) => {
-  try {
-    const userId = Number(req.query.id);
-
-    if (!userId) {
-      return res.status(400).json({
-        ok: false,
-        message: "Query parameter 'id' is required."
-      });
-    }
-
-    const { fName, mName, lName, address, phone, profileImage, country, bio, status } = req.body;
-
-    const [userRows] = await pool.query(
-      "SELECT Type FROM user WHERE User_id = ?",
-      [userId]
-    );
-
-    if (!userRows.length) {
-      return res.status(404).json({
-        ok: false,
-        message: "User not found."
-      });
-    }
-
-    const user = userRows[0];
-
-    const conn = await pool.getConnection();
-
-    try {
-      await conn.beginTransaction();
-
-      // 🔹 Update base user
-      await conn.query(
-        `UPDATE user 
-         SET FName=COALESCE(?, FName),
-             MName=COALESCE(?, MName),
-             LName=COALESCE(?, LName),
-             Address=COALESCE(?, Address),
-             Phone=COALESCE(?, Phone),
-             ProfileImage=COALESCE(?, ProfileImage)
-         WHERE User_id=?`,
-        [fName ?? null, mName ?? null, lName ?? null, address ?? null, phone ?? null, profileImage ?? null, userId]
-      );
-
-      // 🔹 Update subtype
-      if (user.Type === 'Buyer') {
-        await conn.query(
-          "UPDATE Buyer SET Country=COALESCE(?, Country) WHERE Buyer_id=?",
-          [country ?? null, userId]
-        );
-      } else {
-        await conn.query(
-          `UPDATE Artisan 
-           SET Bio=COALESCE(?, Bio),
-               Status=COALESCE(?, Status)
-           WHERE Artisan_id=?`,
-          [bio ?? null, status ?? null, userId]
-        );
-      }
-
-      await conn.commit();
-
-      // Return updated user
-      return getUserById(req, res, next);
-
-    } catch (e) {
-      await conn.rollback();
-      throw e;
-    } finally {
-      conn.release();
-    }
-
-  } catch (err) {
-    next(err);
-  }
-};
-
-
-
-// =============================
-// ❌ DELETE USER
-// =============================
-export const deleteUser = async (req, res, next) => {
-  try {
-    const userId = Number(req.query.id);
-
-    if (!userId) {
-      return res.status(400).json({
-        ok: false,
-        message: "Query parameter 'id' is required."
-      });
-    }
-
-    const [result] = await pool.query(
-      "DELETE FROM user WHERE User_id = ?",
-      [userId]
-    );
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({
-        ok: false,
-        message: "User not found."
-      });
-    }
-
-    return res.status(200).json({
-      ok: true,
-      message: "User deleted successfully."
-    });
-
   } catch (err) {
     next(err);
   }
