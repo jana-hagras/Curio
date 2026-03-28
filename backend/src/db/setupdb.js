@@ -165,6 +165,11 @@ export const initDatabase = async () => {
     const conn = await pool.getConnection();
     try {
         await createAllTables(conn);
+
+        //await conn.query(`
+          //  ALTER TABLE user 
+            //ADD COLUMN IF NOT EXISTS Age INT
+        
     } finally {
         conn.release();
     }

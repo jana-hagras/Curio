@@ -61,11 +61,29 @@ export const searchPayments = async (req, res, next) => {
 export const createPayment = async (req, res, next) => {
   try {
     const { order_id, request_id, totalAmount, paymentMethod } = req.body;
+
     if (!totalAmount || !paymentMethod) {
-      return res.status(400).json({ ok: false, message: "totalAmount and paymentMethod are required." });
+      return res.status(400).json({
+        ok: false,
+        message: "totalAmount and paymentMethod are required."
+      });
     }
+
     if (!order_id && !request_id) {
-      return res.status(400).json({ ok: false, message: "Either order_id or request_id is required." });
+      return res.status(400).json({
+        ok: false,
+        message: "Either order_id or request_id is required."
+      });
+    }
+
+    // ✅ payment method validation here
+    const allowedMethods = ["Cash", "Visa", "MasterCard", "PayPal"];
+
+    if (!allowedMethods.includes(paymentMethod)) {
+      return res.status(400).json({
+        ok: false,
+        message: "Invalid payment method."
+      });
     }
 
     const [result] = await pool.query(
@@ -73,10 +91,21 @@ export const createPayment = async (req, res, next) => {
       [order_id || null, request_id || null, totalAmount, paymentMethod]
     );
 
-    const [rows] = await pool.query("SELECT * FROM Payment WHERE Payment_id = ?", [result.insertId]);
-    return res.status(201).json({ ok: true, data: { payment: sanitizePayment(rows[0]) } });
-  } catch (err) { next(err); }
+    const [rows] = await pool.query(
+      "SELECT * FROM Payment WHERE Payment_id = ?",
+      [result.insertId]
+    );
+
+    return res.status(201).json({
+      ok: true,
+      data: { payment: sanitizePayment(rows[0]) }
+    });
+
+  } catch (err) {
+    next(err);
+  }
 };
+
 
 // READ BY ID
 export const getPaymentById = async (req, res, next) => {
@@ -113,21 +142,71 @@ export const getPaymentsByRequest = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// UPDATE STATUS
+// update request
+//---------------------------------------------------------------------------------
 export const updatePayment = async (req, res, next) => {
   try {
     const id = Number(req.query.id);
-    if (!id) return res.status(400).json({ ok: false, message: "Query parameter 'id' is required." });
+
+    if (!id) {
+      return res.status(400).json({
+        ok: false,
+        message: "Query parameter 'id' is required."
+      });
+    }
 
     const { status, paymentMethod } = req.body;
+
+    const allowedMethods = ["Cash", "Visa", "MasterCard", "PayPal"];
+
+if (paymentMethod && !allowedMethods.includes(paymentMethod)) {
+  return res.status(400).json({
+    ok: false,
+    message: "Invalid payment method."
+  });
+}
+
+    // ✅ only allow Completed
+    if (status && status !== "Completed".toLowerCase()) {
+      return res.status(400).json({
+        ok: false,
+        message: "Wrong status. Only 'Completed' is allowed."
+      });
+    }
+
+    // ✅ first fetch current payment
+    const [rows] = await pool.query(
+      "SELECT * FROM Payment WHERE Payment_id = ?",
+      [id]
+    );
+
+    if (!rows.length) {
+      return res.status(404).json({
+        ok: false,
+        message: "Payment not found."
+      });
+    }
+
+    // ✅ block update if already completed
+    if (rows[0].Status == "Completed".toLowerCase()) {
+      return res.status(400).json({
+        ok: false,
+        message: "Payment is already completed and cannot be updated."
+      });
+    }
+
+    // ✅ update allowed only if pending
     await pool.query(
       "UPDATE Payment SET Status=COALESCE(?,Status), PaymentMethod=COALESCE(?,PaymentMethod) WHERE Payment_id=?",
       [status, paymentMethod, id]
     );
-    return getPaymentById(req, res, next);
-  } catch (err) { next(err); }
-};
 
+    return getPaymentById(req, res, next);
+
+  } catch (err) {
+    next(err);
+  }
+};
 // DELETE
 export const deletePayment = async (req, res, next) => {
   try {

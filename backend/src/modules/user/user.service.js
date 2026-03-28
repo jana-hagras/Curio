@@ -8,8 +8,8 @@ const SALT_ROUNDS = 10;
 // ───────────────────────────────
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE_RE = /^\+?[\d\s\-()]{7,20}$/;
-const NAME_RE = /^[A-Za-z\u0600-\u06FF\s'-]{2,50}$/;   // Latin + Arabic, 2-50 chars
+const PHONE_RE = /^\+?[\d\s\-()]{11}$/;
+const NAME_RE = /^[A-Za-z\u0600-\u06FF\s'-]{2,50}$/;   
 const URL_RE = /^https?:\/\/.+/i;
 
 const normalizeEmail = (email) => String(email || "").trim().toLowerCase();
