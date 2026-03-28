@@ -45,3 +45,22 @@ frontend/build/
 
 # Backend uploads (if you add file uploads later)
 uploads/
+
+
+# Flutter/Dart generated files
+**/mobile_flutter/.dart_tool/
+**/mobile_flutter/.flutter-plugins
+**/mobile_flutter/.flutter-plugins-dependencies
+**/mobile_flutter/.pub-cache/
+**/mobile_flutter/build/
+
+# Android generated files
+**/mobile_flutter/android/.gradle/
+**/mobile_flutter/android/local.properties
+
+# iOS/macOS generated files
+**/mobile_flutter/ios/Flutter/ephemeral/
+**/mobile_flutter/macos/Flutter/ephemeral/
+
+# Symbol files
+**/*.iml
