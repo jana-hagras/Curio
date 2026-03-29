@@ -1,4 +1,14 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({
+    path: path.resolve(__dirname, '../.env')
+});
+
 import { bootstrap } from "./app.controller.js";
 import { initDatabase } from "./db/setupdb.js";
 
@@ -12,9 +22,11 @@ const start = async () => {
     }
 
     const app = bootstrap();
-    const PORT = process.env.PORT || 3000;
+    const PORT = process.env.PORT;
 
-    app.listen(PORT, () => console.log(`Server running on port ${PORT} 🚀`));
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT} 🚀`);
+    });
 };
 
 start();

@@ -28,7 +28,7 @@ const createAllTables = async (conn) => {
         `CREATE TABLE IF NOT EXISTS Artisan (
             Artisan_id INT PRIMARY KEY,
             Bio TEXT,
-            Status VARCHAR(50),
+            Status ENUM('Active','Inactive') DEFAULT 'Active',
             Verified BOOLEAN DEFAULT FALSE,
             FOREIGN KEY (Artisan_id) REFERENCES user(User_id) ON DELETE CASCADE
         )`,
@@ -82,7 +82,7 @@ const createAllTables = async (conn) => {
             DueDate DATE,
             EscrowAmount DECIMAL(10,2),
             EscrowReleaseDate DATE,
-            Status VARCHAR(50),
+            Status ENUM('Pending','Completed') DEFAULT 'Pending',
             FOREIGN KEY (Request_id) REFERENCES Request(Request_id) ON DELETE CASCADE
         )`,
         // APPLICATION
@@ -92,7 +92,7 @@ const createAllTables = async (conn) => {
             Artisan_id INT,
             ApplicationDate DATE,
             Proposal TEXT,
-            Status VARCHAR(50),
+            Status ENUM('Pending','Approved','Rejected') DEFAULT 'Pending',
             FOREIGN KEY (Request_id) REFERENCES Request(Request_id) ON DELETE CASCADE,
             FOREIGN KEY (Artisan_id) REFERENCES Artisan(Artisan_id) ON DELETE CASCADE
         )`,
@@ -102,7 +102,7 @@ const createAllTables = async (conn) => {
             Buyer_id INT,
             OrderDate DATE,
             DeliveryAddress VARCHAR(255),
-            Status VARCHAR(50),
+            Status ENUM('Pending','Completed') DEFAULT 'Pending',
             FOREIGN KEY (Buyer_id) REFERENCES Buyer(Buyer_id) ON DELETE CASCADE
         )`,
         // ORDER ITEM
@@ -167,9 +167,9 @@ export const initDatabase = async () => {
         await createAllTables(conn);
 
         //await conn.query(`
-          //  ALTER TABLE user 
-            //ADD COLUMN IF NOT EXISTS Age INT
-        
+        //  ALTER TABLE user 
+        //ADD COLUMN IF NOT EXISTS Age INT
+
     } finally {
         conn.release();
     }
