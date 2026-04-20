@@ -116,8 +116,8 @@ This command reads the dependencies from `package.json` and downloads them.
 ## 🌐 Frontend (React) Setup
 
 ```bash
-cd frontend-react
-npm install
+Npx create-react-app frontend
+cd frontend
 npm start
 
 ```
