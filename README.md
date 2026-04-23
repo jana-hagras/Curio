@@ -78,8 +78,8 @@ If you're on Windows, starting the entire web platform is simple! You do not nee
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/hagras/curio-fullstack.git
-cd curio-fullstack
+git clone https://github.com/hagras/curio-platform.git
+cd curio-platform
 ```
 
 2. **1-Click Execution**: Just double-click the `start.bat` file located at the root of the project! It will start both the backend and frontend simultaneously, and automatically open your browser.
