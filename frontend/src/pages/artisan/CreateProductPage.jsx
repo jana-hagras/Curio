@@ -59,9 +59,9 @@ export default function CreateProductPage() {
         </div>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <label style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--gray-700)' }}>Product Image</label>
+          <label style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-secondary)' }}>Product Image</label>
           <input type="file" accept="image/*" onChange={handleImageFileChange} />
-          <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)' }}>Or provide an image URL below (e.g. Unsplash URL)</p>
+          <p style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>Or provide an image URL below (e.g. Unsplash URL)</p>
           <Input placeholder="https://images.unsplash.com/photo-..." value={form.image} onChange={e => setForm({...form, image: e.target.value})} />
           {(imageFile || form.image) && (
              <div style={{ marginTop: 8 }}>

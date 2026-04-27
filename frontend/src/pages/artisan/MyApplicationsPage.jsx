@@ -1,33 +1,280 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { applicationService } from '../../services/applicationService';
-import DataTable from '../../components/ui/DataTable';
+import { milestoneService } from '../../services/milestoneService';
 import Badge from '../../components/ui/Badge';
+import Button from '../../components/ui/Button';
+import Spinner from '../../components/ui/Spinner';
+import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import { formatDate } from '../../utils/formatDate';
+import { FiCheck, FiEdit3, FiChevronDown, FiChevronRight, FiBriefcase } from 'react-icons/fi';
+import toast from 'react-hot-toast';
 
 export default function MyApplicationsPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [apps, setApps] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [expandedApp, setExpandedApp] = useState(null);
+  const [milestones, setMilestones] = useState({});
+  const [editingMilestone, setEditingMilestone] = useState(null);
+  const [editForm, setEditForm] = useState({ title: '', description: '' });
+  const [confirmDialog, setConfirmDialog] = useState({ open: false, milestoneId: null, requestId: null });
 
   useEffect(() => {
     applicationService.getByArtisan(user.id)
-      .then(res => setApps(res.data.applications || []))
+      .then(res => setApps(res.data?.applications || []))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [user.id]);
 
-  const columns = [
-    { header: 'Request ID', accessor: 'request_id' },
-    { header: 'Proposal', accessor: 'proposal' },
-    { header: 'Date', accessor: 'applicationDate', render: r => formatDate(r.applicationDate) },
-    { header: 'Status', accessor: 'status', render: r => <Badge status={r.status} /> }
-  ];
+  const loadMilestones = async (requestId) => {
+    try {
+      const mRes = await milestoneService.getByRequest(requestId);
+      setMilestones(prev => ({ ...prev, [requestId]: mRes.data?.milestones || [] }));
+    } catch {
+      setMilestones(prev => ({ ...prev, [requestId]: [] }));
+    }
+  };
+
+  const toggleExpand = (app) => {
+    if (expandedApp === app.id) {
+      setExpandedApp(null);
+    } else {
+      setExpandedApp(app.id);
+      if (!milestones[app.request_id]) {
+        loadMilestones(app.request_id);
+      }
+    }
+  };
+
+  const handleEditMilestone = (milestone) => {
+    setEditingMilestone(milestone.id);
+    setEditForm({ title: milestone.title || '', description: milestone.description || '' });
+  };
+
+  const handleSaveEdit = async (milestoneId, requestId) => {
+    try {
+      await milestoneService.update(milestoneId, editForm);
+      setMilestones(prev => ({
+        ...prev,
+        [requestId]: prev[requestId].map(m =>
+          m.id === milestoneId ? { ...m, ...editForm } : m
+        ),
+      }));
+      setEditingMilestone(null);
+      toast.success('Milestone updated!');
+    } catch {
+      toast.error('Failed to update milestone');
+    }
+  };
+
+  const handleMarkCompleted = async () => {
+    const { milestoneId, requestId } = confirmDialog;
+    try {
+      await milestoneService.update(milestoneId, { status: 'Completed' });
+      setMilestones(prev => ({
+        ...prev,
+        [requestId]: prev[requestId].map(m =>
+          m.id === milestoneId ? { ...m, status: 'Completed' } : m
+        ),
+      }));
+      toast.success('Milestone marked as completed!');
+    } catch {
+      toast.error('Failed to update milestone');
+    } finally {
+      setConfirmDialog({ open: false, milestoneId: null, requestId: null });
+    }
+  };
+
+  if (loading) return <Spinner />;
 
   return (
-    <div>
-      <h1 style={{ marginBottom: 24 }}>My Applications</h1>
-      <DataTable columns={columns} data={apps} loading={loading} emptyMessage="You haven't sent any applications yet." />
+    <div style={{ animation: 'fadeInUp 0.4s ease forwards' }}>
+      <div style={{ marginBottom: 32 }}>
+        <h1 style={{ fontSize: 28, marginBottom: 4 }}>My Orders</h1>
+        <p style={{ color: 'var(--text-secondary)', fontSize: 15 }}>Track your proposals and project milestones</p>
+      </div>
+
+      {apps.length === 0 ? (
+        <div style={{ background: 'var(--surface-primary)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--surface-border)', padding: '80px 32px', textAlign: 'center' }}>
+          <FiBriefcase style={{ fontSize: 56, color: 'var(--surface-border)', marginBottom: 20 }} />
+          <h3 style={{ fontSize: 22, fontFamily: 'var(--font-body)', fontWeight: 600, marginBottom: 8 }}>No applications yet</h3>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 15, marginBottom: 24 }}>Browse requests to find craft opportunities</p>
+          <Button onClick={() => navigate('/requests')}>Browse Requests</Button>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {apps.map(app => {
+            const isExpanded = expandedApp === app.id;
+            const reqMilestones = milestones[app.request_id] || [];
+            const isApproved = app.status === 'Approved';
+
+            return (
+              <div key={app.id} style={{
+                background: 'var(--surface-primary)',
+                borderRadius: 'var(--radius-lg)',
+                border: '1px solid var(--surface-border)',
+                overflow: 'hidden',
+                transition: 'all 0.2s',
+              }}>
+                {/* Application Header */}
+                <div
+                  onClick={() => toggleExpand(app)}
+                  style={{
+                    padding: '20px 24px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    borderBottom: isExpanded ? '1px solid var(--surface-border)' : 'none',
+                    transition: 'background 0.15s',
+                  }}
+                  onMouseOver={e => e.currentTarget.style.background = 'var(--surface-secondary)'}
+                  onMouseOut={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                    {isExpanded ? <FiChevronDown style={{ color: 'var(--gold-primary)', fontSize: 18 }} /> : <FiChevronRight style={{ color: 'var(--text-tertiary)', fontSize: 18 }} />}
+                    <div>
+                      <p style={{ fontWeight: 600, fontSize: 15, marginBottom: 2 }}>
+                        Request #{app.request_id}
+                      </p>
+                      <p style={{ fontSize: 13, color: 'var(--text-secondary)', maxWidth: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {app.proposal?.slice(0, 80) || 'Proposal submitted'}
+                      </p>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{formatDate(app.applicationDate)}</span>
+                    <Badge status={app.status} />
+                  </div>
+                </div>
+
+                {/* Expanded Content */}
+                {isExpanded && (
+                  <div style={{ padding: '20px 24px' }}>
+                    {/* Proposal Detail */}
+                    <div style={{ marginBottom: 20 }}>
+                      <h4 style={{ fontSize: 14, fontFamily: 'var(--font-body)', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Your Proposal</h4>
+                      <p style={{ fontSize: 14, lineHeight: 1.7, color: 'var(--text-primary)', background: 'var(--surface-secondary)', padding: '14px 18px', borderRadius: 'var(--radius-md)' }}>
+                        {app.proposal || 'No proposal text'}
+                      </p>
+                    </div>
+
+                    {/* Milestones */}
+                    {isApproved && (
+                      <div>
+                        <h4 style={{ fontSize: 14, fontFamily: 'var(--font-body)', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 16, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Project Milestones</h4>
+                        {reqMilestones.length === 0 ? (
+                          <p style={{ fontSize: 14, color: 'var(--text-tertiary)', fontStyle: 'italic' }}>No milestones generated yet.</p>
+                        ) : (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                            {reqMilestones.map((m, i) => (
+                              <div key={m.id || i} style={{
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                gap: 16,
+                                padding: '16px',
+                                background: 'var(--surface-secondary)',
+                                borderRadius: 'var(--radius-md)',
+                                border: m.status === 'Completed' ? '1px solid var(--success)' : '1px solid var(--surface-border)',
+                              }}>
+                                <div style={{
+                                  width: 36, height: 36, borderRadius: '50%',
+                                  background: m.status === 'Completed' ? 'var(--success)' : 'var(--surface-tertiary)',
+                                  color: m.status === 'Completed' ? '#fff' : 'var(--text-secondary)',
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  fontSize: 14, fontWeight: 700, flexShrink: 0,
+                                }}>
+                                  {m.status === 'Completed' ? <FiCheck /> : i + 1}
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                  {editingMilestone === m.id ? (
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                      <input
+                                        value={editForm.title}
+                                        onChange={e => setEditForm({ ...editForm, title: e.target.value })}
+                                        style={{
+                                          padding: '8px 12px', borderRadius: 'var(--radius-sm)',
+                                          border: '1px solid var(--surface-border)', background: 'var(--surface-primary)',
+                                          color: 'var(--text-primary)', fontSize: 14, outline: 'none',
+                                        }}
+                                        placeholder="Milestone title"
+                                      />
+                                      <input
+                                        value={editForm.description}
+                                        onChange={e => setEditForm({ ...editForm, description: e.target.value })}
+                                        style={{
+                                          padding: '8px 12px', borderRadius: 'var(--radius-sm)',
+                                          border: '1px solid var(--surface-border)', background: 'var(--surface-primary)',
+                                          color: 'var(--text-primary)', fontSize: 13, outline: 'none',
+                                        }}
+                                        placeholder="Description"
+                                      />
+                                      <div style={{ display: 'flex', gap: 8 }}>
+                                        <Button size="sm" onClick={() => handleSaveEdit(m.id, app.request_id)}>Save</Button>
+                                        <Button size="sm" variant="ghost" onClick={() => setEditingMilestone(null)}>Cancel</Button>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <>
+                                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <p style={{ fontWeight: 600, fontSize: 14 }}>{m.title}</p>
+                                        <Badge status={m.status} />
+                                      </div>
+                                      {m.description && <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4 }}>{m.description}</p>}
+                                      <p style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 4 }}>Due: {formatDate(m.dueDate)}</p>
+                                      {m.status !== 'Completed' && (
+                                        <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                                          <Button size="sm" variant="ghost" onClick={() => handleEditMilestone(m)} icon={FiEdit3}>Edit</Button>
+                                          <Button size="sm" onClick={() => setConfirmDialog({ open: true, milestoneId: m.id, requestId: app.request_id })} icon={FiCheck}>Mark Completed</Button>
+                                        </div>
+                                      )}
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Confirm Dialog */}
+      {confirmDialog.open && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 'var(--z-modal)',
+          animation: 'fadeIn 0.2s ease',
+        }} onClick={() => setConfirmDialog({ open: false, milestoneId: null, requestId: null })}>
+          <div style={{
+            background: 'var(--surface-primary)',
+            borderRadius: 'var(--radius-lg)',
+            padding: 32,
+            maxWidth: 400,
+            width: '90%',
+            animation: 'scaleIn 0.2s ease',
+          }} onClick={e => e.stopPropagation()}>
+            <h3 style={{ fontSize: 20, fontFamily: 'var(--font-body)', fontWeight: 600, marginBottom: 12 }}>Confirm Completion</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
+              Are you sure you want to mark this milestone as completed? This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+              <Button variant="ghost" onClick={() => setConfirmDialog({ open: false, milestoneId: null, requestId: null })}>Cancel</Button>
+              <Button onClick={handleMarkCompleted}>Yes, Mark Completed</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

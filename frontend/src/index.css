@@ -138,6 +138,55 @@
 
   --chat-received: #252525;
   --chat-received-text: #E8E8E8;
+
+  /* Status colors for dark mode - softer backgrounds */
+  --error-light: #3B1C1C;
+  --success-light: #1C3B2A;
+  --warning-light: #3B331C;
+  --info-light: #1C2A3B;
+}
+
+/* ── Dark mode form element overrides ── */
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  background-color: var(--surface-primary);
+  color: var(--text-primary);
+  border-color: var(--surface-border);
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+[data-theme="dark"] select option {
+  background-color: var(--surface-primary);
+  color: var(--text-primary);
+}
+
+/* Override browser autofill backgrounds */
+[data-theme="dark"] input:-webkit-autofill,
+[data-theme="dark"] input:-webkit-autofill:hover,
+[data-theme="dark"] input:-webkit-autofill:focus,
+[data-theme="dark"] textarea:-webkit-autofill,
+[data-theme="dark"] select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--surface-primary) inset !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+  border-color: var(--surface-border) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Light mode autofill */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--surface-primary) inset !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+  border-color: var(--surface-border) !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 /* ═══════════════════════════════════════════
@@ -156,6 +205,12 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--surface-secondary);
+}
+
+#root {
+  min-height: 100vh;
+  background-color: var(--surface-secondary);
 }
 
 body {

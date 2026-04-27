@@ -134,10 +134,8 @@ export default function ProfilePage() {
           {user.type === "Buyer" && <Input label="Country" value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} />}
           {user.type === "Artisan" && <TextArea label="Bio" value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} rows={4} />}
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <label style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--text-secondary)" }}>Profile Image URL</label>
-            <Input placeholder="https://example.com/photo.jpg" value={form.profileImage} onChange={(e) => setForm({ ...form, profileImage: e.target.value })} />
-          </div>
+
+
 
           <Button type="submit" loading={loading} size="lg" fullWidth>Save Changes</Button>
         </form>

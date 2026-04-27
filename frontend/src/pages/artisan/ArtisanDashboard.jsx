@@ -6,8 +6,9 @@ import { marketItemService } from '../../services/marketItemService';
 import { orderService } from '../../services/orderService';
 import { reviewService } from '../../services/reviewService';
 import {
-  FiPackage, FiSend, FiDollarSign, FiMessageCircle,
-  FiTrendingUp, FiStar, FiArrowRight, FiPlus, FiBarChart2
+  FiPackage, FiSend, FiDollarSign, FiCheckCircle,
+  FiTrendingUp, FiStar, FiArrowRight, FiPlus, FiBarChart2, FiClock,
+  FiMessageCircle
 } from 'react-icons/fi';
 import Spinner from '../../components/ui/Spinner';
 import Badge from '../../components/ui/Badge';
@@ -17,7 +18,7 @@ import { formatCurrency } from '../../utils/formatCurrency';
 export default function ArtisanDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [stats, setStats] = useState({ products: 0, applications: 0, revenue: 0, reviews: 0 });
+  const [stats, setStats] = useState({ products: 0, applications: 0, accepted: 0, inProgress: 0, revenue: 0, reviews: 0 });
   const [products, setProducts] = useState([]);
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,12 +34,16 @@ export default function ArtisanDashboard() {
       const orders = oRes.data?.orders || [];
       const myOrders = orders.filter(o => prods.some(p => p.id === o.item_id));
       const revenue = myOrders.reduce((sum, o) => sum + Number(o.totalAmount || 0), 0);
+      const accepted = apps.filter(a => a.status === 'Approved').length;
+      const inProgress = apps.filter(a => a.status === 'Approved').length;
 
       setProducts(prods);
       setApplications(apps);
       setStats({
         products: prods.length,
         applications: apps.length,
+        accepted,
+        inProgress,
         revenue,
         reviews: 0,
       });
@@ -51,8 +56,9 @@ export default function ArtisanDashboard() {
   const statCards = [
     { label: 'Active Products', value: stats.products, icon: FiPackage, color: '#D4A843' },
     { label: 'Sent Proposals', value: stats.applications, icon: FiSend, color: '#3B82F6' },
-    { label: 'Total Revenue', value: formatCurrency(stats.revenue), icon: FiDollarSign, color: '#10B981' },
-    { label: 'Total Reviews', value: stats.reviews, icon: FiStar, color: '#F59E0B' },
+    { label: 'Accepted', value: stats.accepted, icon: FiCheckCircle, color: '#10B981' },
+    { label: 'In Progress', value: stats.inProgress, icon: FiClock, color: '#F59E0B' },
+    { label: 'Total Revenue', value: formatCurrency(stats.revenue), icon: FiDollarSign, color: '#8B5CF6' },
   ];
 
   return (

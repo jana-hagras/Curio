@@ -22,7 +22,6 @@ export default function RegisterPage() {
     address: "",
     country: "",
     bio: "",
-    bio: "",
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);

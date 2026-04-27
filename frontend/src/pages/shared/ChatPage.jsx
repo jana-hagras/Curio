@@ -62,22 +62,26 @@ export default function ChatPage() {
 
     // Simulate auto-reply after a short delay
     setTimeout(() => {
-      const isFirstReply = !messages[contactId] || messages[contactId].length === 0;
-      const replyText = isFirstReply 
-        ? "Hello, thank you for your interest. I will review your request and get back to you shortly."
-        : "Thanks for the message! Working on it now.";
-      
-      const reply = {
-        id: Date.now() + 1,
-        senderId: contactId,
-        receiverId: user.id,
-        text: replyText,
-        timestamp: new Date().toISOString(),
-      };
-      const updatedWithReply = { ...messages };
-      if (!updatedWithReply[contactId]) updatedWithReply[contactId] = [];
-      updatedWithReply[contactId] = [...updated[contactId], reply];
-      saveMessages(updatedWithReply);
+      setMessages(prevMessages => {
+        const currentMsgs = prevMessages[contactId] || [];
+        const isFirstReply = currentMsgs.length <= 1;
+        const replyText = isFirstReply 
+          ? "Hello, thank you for your interest. I will review your request and get back to you shortly."
+          : "Thanks for the message! Working on it now.";
+        
+        const reply = {
+          id: Date.now() + 1,
+          senderId: contactId,
+          receiverId: user.id,
+          text: replyText,
+          timestamp: new Date().toISOString(),
+        };
+        const updatedWithReply = { ...prevMessages };
+        if (!updatedWithReply[contactId]) updatedWithReply[contactId] = [];
+        updatedWithReply[contactId] = [...updatedWithReply[contactId], reply];
+        localStorage.setItem(`curio_chat_${user.id}`, JSON.stringify(updatedWithReply));
+        return updatedWithReply;
+      });
     }, 1500);
   };
 

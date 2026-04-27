@@ -2,7 +2,7 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import {
   FiGrid, FiShoppingBag, FiFileText, FiDollarSign, FiUser,
-  FiPackage, FiImage, FiSend, FiHeart, FiMessageCircle, FiInbox
+  FiPackage, FiImage, FiSend, FiHeart, FiInbox, FiBriefcase
 } from 'react-icons/fi';
 import Navbar from './Navbar';
 import BackButton from '../ui/BackButton';
@@ -15,8 +15,8 @@ export default function DashboardLayout() {
     { path: '/dashboard', label: 'Overview', icon: FiGrid, end: true },
     { path: '/dashboard/orders', label: 'My Orders', icon: FiShoppingBag },
     { path: '/dashboard/requests', label: 'My Requests', icon: FiFileText },
+    { path: '/dashboard/proposals', label: 'Proposals', icon: FiInbox },
     { path: '/dashboard/favorites', label: 'Favorites', icon: FiHeart },
-    { path: '/dashboard/chat', label: 'Chat', icon: FiMessageCircle },
     { path: '/dashboard/payments', label: 'Payments', icon: FiDollarSign },
     { path: '/dashboard/profile', label: 'Profile', icon: FiUser },
   ];
@@ -24,8 +24,8 @@ export default function DashboardLayout() {
   const artisanLinks = [
     { path: '/dashboard', label: 'Overview', icon: FiGrid, end: true },
     { path: '/dashboard/products', label: 'My Products', icon: FiPackage },
+    { path: '/dashboard/applications', label: 'My Orders', icon: FiBriefcase },
     { path: '/dashboard/portfolio', label: 'Portfolio', icon: FiImage },
-    { path: '/dashboard/chat', label: 'Chat', icon: FiMessageCircle },
     { path: '/dashboard/profile', label: 'Profile', icon: FiUser },
   ];
 

@@ -112,6 +112,7 @@ export default function App() {
               </Route>
 
               <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+                <Route index element={<DashboardRouter />} />
                 <Route path="*" element={<DashboardRouter />} />
               </Route>
             </Routes>

@@ -80,3 +80,15 @@
   justify-content: center;
   gap: 6px;
 }
+
+.artisan-card-view {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold-primary);
+  transition: color var(--transition-fast);
+}
+
+.artisan-card:hover .artisan-card-view {
+  color: var(--gold-dark);
+}
