@@ -47,9 +47,11 @@ export default function Navbar() {
     if (isBuyer) {
       return [
         { path: "/", label: "Home", icon: FiHome },
+        { path: "/marketplace", label: "Marketplace", icon: FiList },
         { path: "/dashboard/requests", label: "Requests", icon: FiFileText },
         { path: "/dashboard/proposals", label: "Proposals", icon: FiInbox },
         { path: "/dashboard/favorites", label: "Favorites", icon: FiHeart },
+        { path: "/dashboard/chat", label: "Chat", icon: FiMessageCircle },
       ];
     }
 
@@ -58,6 +60,7 @@ export default function Navbar() {
         { path: "/dashboard", label: "Dashboard", icon: FiGrid },
         { path: "/dashboard/applications", label: "Orders", icon: FiBriefcase },
         { path: "/requests", label: "Requests", icon: FiFileText },
+        { path: "/dashboard/chat", label: "Chat", icon: FiMessageCircle },
       ];
     }
 
@@ -89,7 +92,7 @@ export default function Navbar() {
             <Link
               key={link.path}
               to={link.path}
-              className={`navbar-link ${location.pathname === link.path || location.pathname.startsWith(link.path + '/') ? "navbar-link-active" : ""}`}
+              className={`navbar-link ${location.pathname === link.path || location.pathname.startsWith(link.path + "/") ? "navbar-link-active" : ""}`}
               onClick={() => setMobileOpen(false)}
             >
               {link.label}
@@ -101,10 +104,14 @@ export default function Navbar() {
           <button
             onClick={toggleTheme}
             className="navbar-cart"
-            style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}
-            title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+            style={{
+              border: "none",
+              background: "transparent",
+              cursor: "pointer",
+            }}
+            title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
           >
-            {theme === 'light' ? <FiMoon /> : <FiSun />}
+            {theme === "light" ? <FiMoon /> : <FiSun />}
           </button>
           {isBuyer && (
             <Link to="/cart" className="navbar-cart" id="navbar-cart">
@@ -124,7 +131,14 @@ export default function Navbar() {
               >
                 <div className="navbar-avatar">
                   {profileImage ? (
-                    <img src={profileImage.startsWith('/') ? `http://localhost:3000${profileImage}` : profileImage} alt="" />
+                    <img
+                      src={
+                        profileImage.startsWith("/")
+                          ? `http://localhost:3000${profileImage}`
+                          : profileImage
+                      }
+                      alt=""
+                    />
                   ) : (
                     <>
                       {user?.firstName?.charAt(0)}

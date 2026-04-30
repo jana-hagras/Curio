@@ -2,7 +2,7 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import {
   FiGrid, FiShoppingBag, FiFileText, FiDollarSign, FiUser,
-  FiPackage, FiImage, FiSend, FiHeart, FiInbox, FiBriefcase
+  FiPackage, FiImage, FiSend, FiHeart, FiInbox, FiBriefcase, FiMessageCircle
 } from 'react-icons/fi';
 import Navbar from './Navbar';
 import BackButton from '../ui/BackButton';
@@ -18,6 +18,7 @@ export default function DashboardLayout() {
     { path: '/dashboard/proposals', label: 'Proposals', icon: FiInbox },
     { path: '/dashboard/favorites', label: 'Favorites', icon: FiHeart },
     { path: '/dashboard/payments', label: 'Payments', icon: FiDollarSign },
+    { path: '/dashboard/chat', label: 'Chat', icon: FiMessageCircle },
     { path: '/dashboard/profile', label: 'Profile', icon: FiUser },
   ];
 
@@ -26,6 +27,7 @@ export default function DashboardLayout() {
     { path: '/dashboard/products', label: 'My Products', icon: FiPackage },
     { path: '/dashboard/applications', label: 'My Orders', icon: FiBriefcase },
     { path: '/dashboard/portfolio', label: 'Portfolio', icon: FiImage },
+    { path: '/dashboard/chat', label: 'Chat', icon: FiMessageCircle },
     { path: '/dashboard/profile', label: 'Profile', icon: FiUser },
   ];
 
