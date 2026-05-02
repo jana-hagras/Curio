@@ -39,6 +39,24 @@ class CustomImage extends StatelessWidget {
       );
     }
 
+    // Check if it's a network image
+    if (imageUrl!.startsWith('http')) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: Image.network(
+          imageUrl!,
+          height: height,
+          width: width,
+          fit: fit,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return shimmer(height: height, width: width, borderRadius: borderRadius);
+          },
+          errorBuilder: (ctx, error, stack) => _buildPlaceholder(),
+        ),
+      );
+    }
+
     // Check if it's a local file path
     if (imageUrl!.startsWith('/') || imageUrl!.contains('\\')) {
       final file = File(imageUrl!);

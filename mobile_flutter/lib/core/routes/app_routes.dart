@@ -10,9 +10,12 @@ import '../../features/auth/register_screen.dart';
 // User-flavor screens
 import '../../features/shell/main_shell.dart';
 import '../../features/product/product_details_screen.dart';
+import '../../features/product/add_product_screen.dart';
+import '../../features/artisan/artisan_products_screen.dart';
 import '../../features/cart/cart_screen.dart';
 import '../../features/orders/orders_screen.dart';
 import '../../features/reviews/reviews_screen.dart';
+import '../../features/search/search_screen.dart';
 import '../../features/custom_order/custom_order_screen.dart';
 import '../../features/workshops/workshops_screen.dart';
 import '../../features/cultural/cultural_screen.dart';
@@ -41,9 +44,12 @@ class AppRoutes {
   static const String home = '/home';
   static const String artisan = '/artisan';
   static const String productDetails = '/product-details';
+  static const String addProduct = '/add-product';
+  static const String myStore = '/my-store';
   static const String cart = '/cart';
   static const String orders = '/orders';
   static const String reviews = '/reviews';
+  static const String search = '/search';
   static const String customOrder = '/custom-order';
   static const String workshops = '/workshops';
   static const String cultural = '/cultural';
@@ -77,9 +83,12 @@ class AppRoutes {
       home: (ctx) => const MainShell(),
       artisan: (ctx) => const ArtisanShell(),
       productDetails: (ctx) => const ProductDetailsScreen(),
+      addProduct: (ctx) => const AddProductScreen(),
+      myStore: (ctx) => const ArtisanProductsScreen(),
       cart: (ctx) => const CartScreen(),
       orders: (ctx) => const OrdersScreen(),
       reviews: (ctx) => const ReviewsScreen(),
+      search: (ctx) => const SearchScreen(),
       customOrder: (ctx) => const CustomOrderScreen(),
       workshops: (ctx) => const WorkshopsScreen(),
       cultural: (ctx) => const CulturalScreen(),

@@ -4,6 +4,7 @@ import '../../core/theme/app_colors.dart';
 import '../../models/market_item_model.dart';
 import '../../providers/auth_provider.dart';
 import '../../core/api/api_service.dart';
+import '../../shared/widgets/custom_image.dart';
 
 class ArtisanProductsScreen extends StatefulWidget {
   const ArtisanProductsScreen({super.key});
@@ -121,13 +122,10 @@ class _ArtisanProductsScreenState extends State<ArtisanProductsScreen> {
           // Image
           ClipRRect(
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(16), bottomLeft: Radius.circular(16)),
-            child: Container(
+            child: SizedBox(
               width: 120,
               height: 120,
-              color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8), // Placeholder background
-              child: product.image != null && product.image!.isNotEmpty
-                  ? Image.network(product.image!, fit: BoxFit.cover, errorBuilder: (_, __, ___) => _buildPlaceholder())
-                  : _buildPlaceholder(),
+              child: CustomImage(imageUrl: product.image, fit: BoxFit.cover),
             ),
           ),
           const SizedBox(width: 16),

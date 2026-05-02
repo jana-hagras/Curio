@@ -28,24 +28,24 @@ class _ArtisanDashboardScreenState extends State<ArtisanDashboardScreen> {
   Future<void> _loadDashboardData() async {
     setState(() { _loading = true; _error = null; });
     try {
-      final user = Provider.of<AuthProvider>(context, listen: false).user;
+      final auth = Provider.of<AuthProvider>(context, listen: false);
+      final user = auth.user;
       if (user == null) throw Exception("User not authenticated");
 
-      // Fetch all orders and filter for the artisan's products if needed, 
-      // or assume backend returns only their orders via some endpoint.
-      // Using /orders/all as fallback and filtering by logic if necessary,
-      // but typically we can just show stats.
-      final oRes = await ApiService.get('/orders/all');
+      // Fetch orders specifically for this artisan
+      final oRes = await ApiService.get('/orders/artisan', query: {'artisan_id': user.id.toString()});
       final orders = (oRes['data']['orders'] as List?) ?? [];
       
       double earnings = 0;
       int pending = 0;
       
       for (final order in orders) {
-        // Just mock processing the earnings from the retrieved orders.
-        // In reality, this would check if the order contains artisan's products.
-        earnings += (order['totalAmount'] ?? 0).toDouble();
-        if (order['status'] == 'Pending') pending++;
+        // Calculate earnings from completed orders
+        if (order['status'] == 'Completed') {
+          earnings += (order['totalAmount'] ?? 0).toDouble();
+        } else if (order['status'] == 'Pending') {
+          pending++;
+        }
       }
 
       if (mounted) {

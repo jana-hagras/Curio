@@ -7,7 +7,7 @@ import '../../providers/favorite_provider.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/notification_provider.dart';
 import '../../shared/widgets/card_shimmer.dart';
-import '../../shared/widgets/custom_image.dart';
+import '../../shared/widgets/product_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -364,99 +364,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: displayItems.length,
                 itemBuilder: (_, i) {
                   final item = displayItems[i];
-                  return GestureDetector(
+                  return ProductCard(
+                    item: item,
                     onTap: () => Navigator.pushNamed(
                         context, '/product-details',
                         arguments: item),
-                    child: _ProductCard(
-                      id: item.id.toString(),
-                      title: item.item,
-                      price: "EGP ${item.price.toStringAsFixed(0)}",
-                      image: item.image,
-                      item: item,
-                    ),
                   );
                 },
               );
             },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ProductCard extends StatelessWidget {
-  final String id, title, price;
-  final String? image;
-  final dynamic item;
-  const _ProductCard(
-      {required this.id,
-      required this.title,
-      required this.price,
-      this.image,
-      this.item});
-
-  @override
-  Widget build(BuildContext context) {
-    final favProvider = Provider.of<FavoriteProvider>(context);
-    final isFav = favProvider.isFavorite(id);
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.divider.withValues(alpha: 0.5)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Container(
-              decoration: const BoxDecoration(
-                color: AppColors.background,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-              ),
-              child: Stack(
-                children: [
-                  Center(child: CustomImage(imageUrl: image, borderRadius: 12)),
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: GestureDetector(
-                      onTap: () => favProvider.toggleFavorite(id),
-                      child: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: const BoxDecoration(
-                            color: Colors.white, shape: BoxShape.circle),
-                        child: Icon(
-                            isFav ? Icons.favorite : Icons.favorite_border,
-                            color: isFav ? Colors.red : AppColors.textSecondary,
-                            size: 18),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w600, fontSize: 14),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis),
-                const SizedBox(height: 4),
-                Text(price,
-                    style: const TextStyle(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14)),
-              ],
-            ),
           ),
         ],
       ),

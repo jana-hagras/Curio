@@ -20,7 +20,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please fill in all fields"), backgroundColor: AppColors.error),
+        const SnackBar(
+            content: Text("Please fill in all fields"),
+            backgroundColor: AppColors.error),
       );
       return;
     }
@@ -40,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (success) {
       final userType = auth.user?.type;
       if (userType == "Artisan") {
-        Navigator.pushReplacementNamed(context, '/artisan'); 
+        Navigator.pushReplacementNamed(context, '/artisan');
       } else if (userType == "Admin") {
         Navigator.pushReplacementNamed(context, '/admin/dashboard');
       } else {
@@ -48,7 +50,9 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(auth.error ?? "Login failed"), backgroundColor: AppColors.error),
+        SnackBar(
+            content: Text(auth.error ?? "Login failed"),
+            backgroundColor: AppColors.error),
       );
     }
   }
@@ -68,55 +72,88 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    boxShadow: [BoxShadow(color: AppColors.gold.withValues(alpha: 0.2), blurRadius: 30, spreadRadius: 5)],
+                    boxShadow: [
+                      BoxShadow(
+                          color: AppColors.gold.withValues(alpha: 0.2),
+                          blurRadius: 30,
+                          spreadRadius: 5)
+                    ],
                   ),
-                  child: Image.asset('assets/icons/logo.png', width: 72, height: 72),
+                  child: Image.asset('assets/icons/logo.png',
+                      width: 72, height: 72),
                 ),
               ),
               const SizedBox(height: 28),
-              const Center(child: Text("Welcome Back", style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, fontFamily: 'Playfair', color: AppColors.gold))),
+              const Center(
+                  child: Text("Welcome Back",
+                      style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w800,
+                          fontFamily: 'Playfair',
+                          color: AppColors.gold))),
               const SizedBox(height: 8),
-              Center(child: Text("Sign in to continue exploring", style: TextStyle(color: AppColors.textMuted, fontSize: 14))),
+              Center(
+                  child: Text("Sign in to continue exploring",
+                      style:
+                          TextStyle(color: AppColors.textMuted, fontSize: 14))),
               const SizedBox(height: 48),
-
-              const Text("Email", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textSecondary)),
+              const Text("Email",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                      color: AppColors.textSecondary)),
               const SizedBox(height: 8),
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                style: const TextStyle(color: AppColors.textPrimary),
-                decoration: const InputDecoration(hintText: "your@email.com", prefixIcon: Icon(Icons.email_outlined, size: 20)),
+                style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                decoration: const InputDecoration(
+                    hintText: "your@email.com",
+                    prefixIcon: Icon(Icons.email_outlined, size: 20)),
               ),
               const SizedBox(height: 24),
-
-              const Text("Password", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textSecondary)),
+              const Text("Password",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                      color: AppColors.textSecondary)),
               const SizedBox(height: 8),
               TextField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
-                style: const TextStyle(color: AppColors.textPrimary),
+                style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                 decoration: InputDecoration(
                   hintText: "Enter your password",
                   prefixIcon: const Icon(Icons.lock_outline, size: 20),
                   suffixIcon: IconButton(
-                    icon: Icon(_obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 20, color: AppColors.textMuted),
-                    onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                    icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        size: 20,
+                        color: AppColors.textMuted),
+                    onPressed: () =>
+                        setState(() => _obscurePassword = !_obscurePassword),
                   ),
                 ),
               ),
               const SizedBox(height: 8),
               Align(
                 alignment: Alignment.centerRight,
-                child: TextButton(onPressed: () {}, child: const Text("Forgot Password?")),
+                child: TextButton(
+                    onPressed: () {}, child: const Text("Forgot Password?")),
               ),
               const SizedBox(height: 24),
-
               Consumer<AuthProvider>(
                 builder: (ctx, auth, _) {
                   return ElevatedButton(
                     onPressed: auth.isLoading ? null : _handleLogin,
                     child: auth.isLoading
-                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black))
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2, color: Colors.black))
                         : const Text("Sign In"),
                   );
                 },
@@ -124,7 +161,11 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 24),
               Row(children: [
                 Expanded(child: Divider(color: AppColors.divider)),
-                Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: Text("or", style: TextStyle(color: AppColors.textMuted, fontSize: 13))),
+                Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text("or",
+                        style: TextStyle(
+                            color: AppColors.textMuted, fontSize: 13))),
                 Expanded(child: Divider(color: AppColors.divider)),
               ]),
               const SizedBox(height: 24),
