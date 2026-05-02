@@ -1,4 +1,4 @@
-const List<String> CATEGORIES = [
+const List<String> productCategories = [
   "Ceramic",
   "Jewelry",
   "Textiles",

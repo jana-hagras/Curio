@@ -21,7 +21,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final _qtyController = TextEditingController();
   final _imageUrlController = TextEditingController();
   
-  String _selectedCategory = CATEGORIES[0];
+  String _selectedCategory = productCategories[0];
   bool _loading = false;
 
   @override
@@ -99,8 +99,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
               
               _label("Category *"),
               DropdownButtonFormField<String>(
-                value: _selectedCategory,
-                items: CATEGORIES.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
+                initialValue: _selectedCategory,
+                items: productCategories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
                 onChanged: (v) => setState(() => _selectedCategory = v!),
                 decoration: const InputDecoration(),
               ),

@@ -181,8 +181,4 @@ class _ArtisanProductsScreenState extends State<ArtisanProductsScreen> {
       ),
     );
   }
-
-  Widget _buildPlaceholder() {
-    return const Center(child: Icon(Icons.image_not_supported_outlined, size: 32, color: AppColors.textMuted));
-  }
 }

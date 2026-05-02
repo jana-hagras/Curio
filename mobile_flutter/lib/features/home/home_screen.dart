@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../providers/market_provider.dart';
-import '../../providers/favorite_provider.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/notification_provider.dart';
 import '../../shared/widgets/card_shimmer.dart';

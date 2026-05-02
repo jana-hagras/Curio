@@ -166,16 +166,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _stat(String value, String label) {
-    return Column(
-      children: [
-        Text(value, style: const TextStyle(color: AppColors.primary, fontSize: 22, fontWeight: FontWeight.w800)),
-        const SizedBox(height: 4),
-        Text(label, style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12)),
-      ],
-    );
-  }
-
   Widget _menuItem(BuildContext context, IconData icon, String title, String sub, String route) {
     return ListTile(
       onTap: () => Navigator.pushNamed(context, route),
