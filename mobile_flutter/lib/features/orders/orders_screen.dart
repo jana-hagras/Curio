@@ -16,7 +16,6 @@ class OrdersScreen extends StatelessWidget {
         : orderProvider.orders;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(title: const Text("My Orders")),
       body: userOrders.isEmpty
           ? const Center(

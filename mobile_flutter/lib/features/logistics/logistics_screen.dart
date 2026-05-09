@@ -7,7 +7,6 @@ class LogisticsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(title: const Text("Tracking")),
       body: Padding(
         padding: const EdgeInsets.all(24),

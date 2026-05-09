@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 /// Centralized theme definitions — premium gold & black aesthetic.
-/// Aligned with frontend CSS design system (index.css).
 class AppTheme {
   // ── Light Theme ───────────────────────────────────────────────────
   static ThemeData get lightTheme => _buildTheme(Brightness.light);
@@ -12,86 +12,94 @@ class AppTheme {
   static ThemeData get darkTheme => _buildTheme(Brightness.dark);
 
   // ── Admin Theme ───────────────────────────────────────────────────
-  static ThemeData get adminTheme => _buildTheme(Brightness.dark);
+  static ThemeData get adminTheme => _buildTheme(Brightness.dark); // Default admin to dark, or allow toggle
 
   static ThemeData _buildTheme(Brightness brightness) {
     final isDark = brightness == Brightness.dark;
-
-    // Matches frontend CSS custom properties
-    final backgroundColor = isDark ? AppColors.background : AppColors.backgroundLight;
-    final surfaceColor = isDark ? AppColors.surface : AppColors.surfaceLight;
-    final surfaceElevated = isDark ? AppColors.surfaceElevated : AppColors.surfaceTertiaryLight;
-    final textPrimary = isDark ? AppColors.textPrimary : AppColors.textPrimaryLight;
-    final textSecondary = isDark ? AppColors.textSecondary : AppColors.textSecondaryLight;
-    final dividerColor = isDark ? AppColors.divider : AppColors.borderLight;
+    
+    final backgroundColor = isDark ? AppColors.darkSurfacePrimary : AppColors.surfaceSecondary;
+    final surfaceColor = isDark ? AppColors.darkSurfaceSecondary : AppColors.surfacePrimary;
+    final surfaceLightColor = isDark ? AppColors.darkSurfaceTertiary : AppColors.surfaceTertiary;
+    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+    final dividerColor = isDark ? AppColors.darkSurfaceBorder : AppColors.surfaceBorder;
+    
+    final baseTextTheme = isDark ? ThemeData.dark().textTheme : ThemeData.light().textTheme;
+    final interTextTheme = GoogleFonts.interTextTheme(baseTextTheme).copyWith(
+      displayLarge: GoogleFonts.playfairDisplay(textStyle: baseTextTheme.displayLarge?.copyWith(color: textPrimary)),
+      displayMedium: GoogleFonts.playfairDisplay(textStyle: baseTextTheme.displayMedium?.copyWith(color: textPrimary)),
+      headlineLarge: GoogleFonts.playfairDisplay(textStyle: baseTextTheme.headlineLarge?.copyWith(color: textPrimary, fontWeight: FontWeight.w800)),
+      headlineMedium: GoogleFonts.playfairDisplay(textStyle: baseTextTheme.headlineMedium?.copyWith(color: textPrimary, fontWeight: FontWeight.w700)),
+      titleLarge: GoogleFonts.playfairDisplay(textStyle: baseTextTheme.titleLarge?.copyWith(color: textPrimary, fontWeight: FontWeight.w700)),
+      bodyLarge: GoogleFonts.inter(textStyle: baseTextTheme.bodyLarge?.copyWith(color: textPrimary)),
+      bodyMedium: GoogleFonts.inter(textStyle: baseTextTheme.bodyMedium?.copyWith(color: textPrimary)),
+      bodySmall: GoogleFonts.inter(textStyle: baseTextTheme.bodySmall?.copyWith(color: textSecondary)),
+      labelLarge: GoogleFonts.inter(textStyle: baseTextTheme.labelLarge?.copyWith(color: textPrimary, fontWeight: FontWeight.w600)),
+    );
 
     return ThemeData(
       brightness: brightness,
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: backgroundColor,
-      fontFamily: 'Inter',
+      textTheme: interTextTheme,
       colorScheme: ColorScheme(
         brightness: brightness,
         primary: AppColors.primary,
-        onPrimary: isDark ? Colors.black : AppColors.dark,
+        onPrimary: isDark ? AppColors.blackDeep : AppColors.surfacePrimary,
         secondary: AppColors.gold,
-        onSecondary: AppColors.dark,
+        onSecondary: AppColors.blackDeep,
         surface: surfaceColor,
         onSurface: textPrimary,
         error: AppColors.error,
-        onError: Colors.white,
+        onError: AppColors.surfacePrimary,
       ),
 
-        // ── AppBar — matches frontend .navbar ─────────────────────
+        // ── AppBar ─────────────────────────────────────────────────
         appBarTheme: AppBarTheme(
-          backgroundColor: AppColors.dark,  // Always dark like frontend navbar
-          foregroundColor: Colors.white,
+          backgroundColor: backgroundColor,
+          foregroundColor: textPrimary,
           elevation: 0,
           centerTitle: true,
           scrolledUnderElevation: 0,
-          systemOverlayStyle: SystemUiOverlayStyle.light,
-          titleTextStyle: const TextStyle(
-            color: Colors.white,
+          systemOverlayStyle: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+          titleTextStyle: GoogleFonts.playfairDisplay(
+            color: textPrimary,
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            fontFamily: 'Playfair Display',
-            letterSpacing: 1.5,
           ),
           iconTheme: const IconThemeData(color: AppColors.gold, size: 22),
         ),
 
-        // ── Elevated Button — matches frontend .btn-primary ───────
+        // ── Elevated Button ────────────────────────────────────────
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
-            foregroundColor: AppColors.dark,
+            foregroundColor: AppColors.blackDeep,
             minimumSize: const Size(double.infinity, 52),
             elevation: 0,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),  // --radius-md
+              borderRadius: BorderRadius.circular(14),
             ),
-            textStyle: const TextStyle(
-              fontWeight: FontWeight.w600,
+            textStyle: GoogleFonts.inter(
+              fontWeight: FontWeight.w700,
               fontSize: 15,
-              fontFamily: 'Inter',
-              letterSpacing: 0.2,
+              letterSpacing: 0.5,
             ),
           ),
         ),
 
-        // ── Outlined Button — matches frontend .btn-outline ───────
+        // ── Outlined Button ────────────────────────────────────────
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
             foregroundColor: AppColors.gold,
             minimumSize: const Size(double.infinity, 52),
-            side: const BorderSide(color: AppColors.gold, width: 1.5),
+            side: const BorderSide(color: AppColors.borderGold, width: 1.5),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(14),
             ),
-            textStyle: const TextStyle(
+            textStyle: GoogleFonts.inter(
               fontWeight: FontWeight.w600,
               fontSize: 15,
-              fontFamily: 'Inter',
             ),
           ),
         ),
@@ -100,42 +108,37 @@ class AppTheme {
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
             foregroundColor: AppColors.gold,
-            textStyle: const TextStyle(
+            textStyle: GoogleFonts.inter(
               fontWeight: FontWeight.w600,
               fontSize: 14,
-              fontFamily: 'Inter',
             ),
           ),
         ),
 
-        // ── Input Decoration — matches frontend Input.css ─────────
+        // ── Input Decoration ───────────────────────────────────────
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: surfaceColor,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),  // --radius-md
+            borderRadius: BorderRadius.circular(14),
             borderSide: BorderSide(color: dividerColor),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(14),
             borderSide: BorderSide(color: dividerColor),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(14),
             borderSide:
                 const BorderSide(color: AppColors.primary, width: 1.5),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(14),
             borderSide: const BorderSide(color: AppColors.error),
           ),
           hintStyle: TextStyle(
-            color: isDark ? AppColors.textMuted : AppColors.textTertiaryLight,
-            fontSize: 14,
-          ),
-          labelStyle: TextStyle(
             color: textSecondary,
             fontSize: 14,
           ),
@@ -143,12 +146,13 @@ class AppTheme {
           suffixIconColor: textSecondary,
         ),
 
-        // ── Card — matches frontend .card ─────────────────────────
+        // ── Card ───────────────────────────────────────────────────
         cardTheme: CardThemeData(
           color: surfaceColor,
-          elevation: 0,
+          elevation: isDark ? 4 : 2,
+          shadowColor: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16), // --radius-lg
+            borderRadius: BorderRadius.circular(16),
             side: BorderSide(color: dividerColor),
           ),
           margin: const EdgeInsets.only(bottom: 12),
@@ -170,7 +174,7 @@ class AppTheme {
         // ── NavigationBar (Material 3) ─────────────────────────────
         navigationBarTheme: NavigationBarThemeData(
           height: 68,
-          backgroundColor: isDark ? AppColors.surface : AppColors.surfaceLight,
+          backgroundColor: surfaceColor,
           surfaceTintColor: Colors.transparent,
           indicatorColor: AppColors.gold.withValues(alpha: 0.12),
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
@@ -178,7 +182,8 @@ class AppTheme {
             if (states.contains(WidgetState.selected)) {
               return const IconThemeData(color: AppColors.gold, size: 24);
             }
-            return IconThemeData(color: textSecondary, size: 24);
+            return IconThemeData(
+                color: textSecondary, size: 24);
           }),
           labelTextStyle: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
@@ -197,7 +202,7 @@ class AppTheme {
 
         // ── Snackbar ───────────────────────────────────────────────
         snackBarTheme: SnackBarThemeData(
-          backgroundColor: surfaceElevated,
+          backgroundColor: surfaceLightColor,
           contentTextStyle: TextStyle(color: textPrimary),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -213,31 +218,6 @@ class AppTheme {
           space: 1,
         ),
 
-        // ── Text Theme — Playfair Display for headings, Inter for body ─
-        textTheme: TextTheme(
-          displayLarge: TextStyle(
-              color: textPrimary, fontFamily: 'Playfair Display'),
-          displayMedium: TextStyle(
-              color: textPrimary, fontFamily: 'Playfair Display'),
-          headlineLarge: TextStyle(
-              color: textPrimary,
-              fontWeight: FontWeight.w800,
-              fontFamily: 'Playfair Display'),
-          headlineMedium: TextStyle(
-              color: textPrimary,
-              fontWeight: FontWeight.w700,
-              fontFamily: 'Playfair Display'),
-          titleLarge: TextStyle(
-              color: textPrimary,
-              fontWeight: FontWeight.w700),
-          bodyLarge: TextStyle(color: textPrimary),
-          bodyMedium: TextStyle(color: textPrimary),
-          bodySmall: TextStyle(color: textSecondary),
-          labelLarge: TextStyle(
-              color: textPrimary,
-              fontWeight: FontWeight.w600),
-        ),
-
         // ── Icon Theme ─────────────────────────────────────────────
         iconTheme: IconThemeData(color: textSecondary),
 
@@ -249,9 +229,9 @@ class AppTheme {
           ),
         ),
 
-        // ── Chip — matches frontend category badges ─────────────────
+        // ── Chip ────────────────────────────────────────────────────
         chipTheme: ChipThemeData(
-          backgroundColor: isDark ? AppColors.surfaceElevated : AppColors.surfaceTertiaryLight,
+          backgroundColor: surfaceLightColor,
           selectedColor: AppColors.gold.withValues(alpha: 0.15),
           labelStyle: TextStyle(fontSize: 12, color: textPrimary),
           side: BorderSide(color: dividerColor),

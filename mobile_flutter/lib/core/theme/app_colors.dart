@@ -1,62 +1,71 @@
 import 'package:flutter/material.dart';
 
 /// Premium gold & black color palette for the Curio platform.
-/// Colors aligned with frontend CSS custom properties (index.css).
 class AppColors {
-  // ── Brand core (matches --gold-primary / --gold-light / --gold-dark) ──
-  static const Color primary = Color(0xFFD4A843);
-  static const Color primaryDark = Color(0xFFB8912A);
-  static const Color primaryLight = Color(0xFFE0BC5E);
-  static const Color primaryLighter = Color(0xFFF0D98A);
-  static const Color gold = Color(0xFFD4A843);
+  // ── Brand core ────────────────────────────────────────────────────
+  static const Color goldPrimary = Color(0xFFD4A843);
   static const Color goldLight = Color(0xFFE0BC5E);
+  static const Color goldLighter = Color(0xFFF0D98A);
+  static const Color goldDark = Color(0xFFB8912A);
+  
+  static const Color primary = goldPrimary;
+  static const Color primaryDark = goldDark;
+  static const Color primaryLight = goldLight;
 
-  // ── Light-mode surfaces (matches frontend light theme) ────────────
-  static const Color backgroundLight = Color(0xFFF7F7F5);   // --surface-secondary
-  static const Color surfaceLight = Color(0xFFFFFFFF);        // --surface-primary
-  static const Color surfaceTertiaryLight = Color(0xFFEDEBE8); // --surface-tertiary
-  static const Color borderLight = Color(0xFFE0DCD5);        // --surface-border
-  static const Color creamLight = Color(0xFFFDF8F0);         // --cream
-  static const Color textPrimaryLight = Color(0xFF0A0A0A);   // --text-primary
-  static const Color textSecondaryLight = Color(0xFF6B6B6B); // --text-secondary
-  static const Color textTertiaryLight = Color(0xFF9CA3AF);  // --text-tertiary
+  // ── Black Palette ─────────────────────────────────────────────────
+  static const Color blackDeep = Color(0xFF0A0A0A);
+  static const Color blackMid = Color(0xFF111111);
+  static const Color blackSoft = Color(0xFF1A1A1A);
+  static const Color blackMuted = Color(0xFF242424);
 
-  // ── Dark-mode surfaces (matches frontend [data-theme="dark"]) ─────
-  static const Color background = Color(0xFF121212);
-  static const Color surface = Color(0xFF1E1E1E);
-  static const Color surfaceElevated = Color(0xFF2A2A2A);
-  static const Color surfaceAccent = Color(0xFF22201C);
-  static const Color borderDark = Color(0xFF333333);
+  // ── Surface Colors (Light Mode) ───────────────────────────────────
+  static const Color surfacePrimary = Color(0xFFFFFFFF);
+  static const Color surfaceSecondary = Color(0xFFF7F7F5);
+  static const Color surfaceTertiary = Color(0xFFEDEBE8);
+  static const Color surfaceBorder = Color(0xFFE0DCD5);
+  static const Color cream = Color(0xFFFDF8F0);
+  
+  // ── Surface Colors (Dark Mode) ────────────────────────────────────
+  static const Color darkSurfacePrimary = Color(0xFF161616);
+  static const Color darkSurfaceSecondary = Color(0xFF1E1E1E);
+  static const Color darkSurfaceTertiary = Color(0xFF252525);
+  static const Color darkSurfaceBorder = Color(0xFF333333);
 
-  // ── Text (dark mode) ──────────────────────────────────────────────
-  static const Color textPrimary = Color(0xFFF5F5F5);
-  static const Color textSecondary = Color(0xFF9E9E9E);
-  static const Color textMuted = Color(0xFF616161);
+  // ── Text Colors (Light Mode) ──────────────────────────────────────
+  static const Color textPrimary = Color(0xFF0A0A0A);
+  static const Color textSecondary = Color(0xFF6B6B6B);
+  static const Color textTertiary = Color(0xFF9CA3AF);
+  static const Color textLight = Color(0xFFFFFFFF);
 
-  // ── Borders & Dividers ────────────────────────────────────────────
-  static const Color divider = Color(0xFF2A2A2A);
-  static const Color border = Color(0xFF333333);
-  static const Color borderGold = Color(0x33D4A843);    // 20% gold border
+  // ── Text Colors (Dark Mode) ───────────────────────────────────────
+  static const Color darkTextPrimary = Color(0xFFE8E8E8);
+  static const Color darkTextSecondary = Color(0xFFA0A0A0);
+  static const Color darkTextTertiary = Color(0xFF707070);
 
-  // ── Status (matches frontend --success / --error / --warning / --info) ─
+  // ── Legacy aliases for existing code compatibility ────────────────
+  static const Color background = surfaceSecondary; // Default to Light Mode secondary
+  static const Color surface = surfacePrimary;
+  static const Color surfaceLight = surfaceSecondary;
+  static const Color surfaceAccent = cream;
+
+  static const Color divider = surfaceBorder;
+  static const Color border = surfaceBorder;
+  static const Color borderGold = Color(0x33D4A843);
+  static const Color gold = goldPrimary;
+
+  static const Color textMuted = textTertiary;
+
+  // Dark mode aliases
+  static const Color dark = blackDeep;
+  static const Color darkSurface = darkSurfacePrimary;
+  static const Color darkCard = darkSurfaceSecondary;
+
+  // ── Status ────────────────────────────────────────────────────────
   static const Color success = Color(0xFF10B981);
-  static const Color successLight = Color(0xFFD1FAE5);
   static const Color warning = Color(0xFFF59E0B);
-  static const Color warningLight = Color(0xFFFEF3C7);
   static const Color error = Color(0xFFEF4444);
-  static const Color errorLight = Color(0xFFFEE2E2);
   static const Color info = Color(0xFF3B82F6);
-  static const Color infoLight = Color(0xFFDBEAFE);
-
-  // ── Dark mode aliases (backward compat) ───────────────────────────
-  static const Color dark = Color(0xFF0A0A0A);          // --black-deep
-  static const Color darkMid = Color(0xFF111111);        // --black-mid
-  static const Color darkSoft = Color(0xFF1A1A1A);       // --black-soft
-  static const Color darkCard = Color(0xFF2A2A2A);
-
-  // ── Shadows ────────────────────────────────────────────────────────
-  static const Color shadowGold = Color(0x4DD4A843);     // 30% gold
-  static const Color shadowGoldLg = Color(0x66D4A843);   // 40% gold
+  static const Color errorLight = Color(0xFFFEE2E2);
 
   // ── Category accents ──────────────────────────────────────────────
   static const Color accentOrange = Color(0xFFE67E22);
@@ -65,7 +74,7 @@ class AppColors {
   static const Color accentBlue = Color(0xFF2980B9);
 
   // ── Admin accent ──────────────────────────────────────────────────
-  static const Color adminAccent = Color(0xFFD4A843);
-  static const Color adminPrimary = Color(0xFF0A0A0A);
-  static const Color adminSurface = Color(0xFF141414);
+  static const Color adminAccent = goldPrimary; 
+  static const Color adminPrimary = blackDeep;
+  static const Color adminSurface = darkSurfacePrimary;
 }

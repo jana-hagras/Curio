@@ -56,7 +56,7 @@ class _ArtisanProductsScreenState extends State<ArtisanProductsScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('My Products', style: TextStyle(fontFamily: 'Playfair', fontWeight: FontWeight.w700)),
+        title: const Text('My Products', style: TextStyle(fontWeight: FontWeight.w700)),
         centerTitle: false,
         actions: [
           IconButton(

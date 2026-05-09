@@ -19,7 +19,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
     return Scaffold(
-      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Row(
           children: [
@@ -50,7 +49,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Image.asset('assets/icons/logo.png', width: 36, height: 36),
             const SizedBox(width: 10),
-            const Text('CURIO', style: TextStyle(color: AppColors.gold, fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: 4, fontFamily: 'Playfair')),
+            const Text('CURIO', style: TextStyle(color: AppColors.gold, fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: 4)),
           ]),
           const SizedBox(height: 6),
           Text('Admin Panel', style: TextStyle(color: AppColors.gold.withValues(alpha: 0.6), fontSize: 11, letterSpacing: 2, fontWeight: FontWeight.w600)),
@@ -173,7 +172,7 @@ class _OverviewTabState extends State<_OverviewTab> {
           // Header
           Row(children: [
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('Dashboard', style: TextStyle(color: AppColors.gold, fontSize: 26, fontWeight: FontWeight.w800, fontFamily: 'Playfair')),
+              const Text('Dashboard', style: TextStyle(color: AppColors.gold, fontSize: 26, fontWeight: FontWeight.w800)),
               const SizedBox(height: 4),
               Text('Welcome back, Admin', style: TextStyle(color: AppColors.textMuted, fontSize: 13)),
             ])),
@@ -325,7 +324,7 @@ class _UsersTabState extends State<_UsersTab> {
           SliverToBoxAdapter(child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('User Management', style: TextStyle(color: AppColors.gold, fontSize: 24, fontWeight: FontWeight.w800, fontFamily: 'Playfair')),
+              const Text('User Management', style: TextStyle(color: AppColors.gold, fontSize: 24, fontWeight: FontWeight.w800)),
               const SizedBox(height: 4),
               Text('${_users.length} registered users', style: TextStyle(color: AppColors.textMuted, fontSize: 13)),
               const SizedBox(height: 16),
@@ -442,7 +441,7 @@ class _ProductsTabState extends State<_ProductsTab> {
           SliverToBoxAdapter(child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('Product Moderation', style: TextStyle(color: AppColors.gold, fontSize: 24, fontWeight: FontWeight.w800, fontFamily: 'Playfair')),
+              const Text('Product Moderation', style: TextStyle(color: AppColors.gold, fontSize: 24, fontWeight: FontWeight.w800)),
               const SizedBox(height: 4),
               Text('${_items.length} listed products', style: TextStyle(color: AppColors.textMuted, fontSize: 13)),
               const SizedBox(height: 16),
@@ -538,7 +537,7 @@ class _AnalyticsTabState extends State<_AnalyticsTab> {
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(20),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('Analytics & Reports', style: TextStyle(color: AppColors.gold, fontSize: 24, fontWeight: FontWeight.w800, fontFamily: 'Playfair')),
+          const Text('Analytics & Reports', style: TextStyle(color: AppColors.gold, fontSize: 24, fontWeight: FontWeight.w800)),
           const SizedBox(height: 4),
           Text('Platform performance metrics', style: TextStyle(color: AppColors.textMuted, fontSize: 13)),
           const SizedBox(height: 24),

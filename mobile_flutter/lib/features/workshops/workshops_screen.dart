@@ -9,7 +9,7 @@ class WorkshopsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Workshops & Mentorship', style: TextStyle(fontFamily: 'Playfair', fontSize: 20)),
+        title: const Text('Workshops & Mentorship', style: TextStyle(fontSize: 20)),
       ),
       body: DefaultTabController(
         length: 2,

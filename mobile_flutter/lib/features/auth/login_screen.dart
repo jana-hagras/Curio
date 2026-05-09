@@ -59,14 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final surfaceColor = theme.colorScheme.surface;
-    final textColor = theme.colorScheme.onSurface;
-    final secondaryText = isDark ? AppColors.textSecondary : AppColors.textSecondaryLight;
-
     return Scaffold(
-      backgroundColor: isDark ? AppColors.background : AppColors.backgroundLight,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 28),
@@ -74,7 +67,6 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 50),
-              // Logo with gold glow
               Center(
                 child: Container(
                   decoration: BoxDecoration(
@@ -91,48 +83,43 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 28),
-              // Title — Playfair Display like frontend
-              Center(
+              const Center(
                   child: Text("Welcome Back",
                       style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.w800,
-                          fontFamily: 'Playfair Display',
                           color: AppColors.gold))),
               const SizedBox(height: 8),
               Center(
                   child: Text("Sign in to continue exploring",
-                      style: TextStyle(color: secondaryText, fontSize: 14))),
+                      style:
+                          TextStyle(color: AppColors.textMuted, fontSize: 14))),
               const SizedBox(height: 48),
-
-              // Email label
-              Text("Email",
+              const Text("Email",
                   style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
-                      color: secondaryText)),
+                      color: AppColors.textSecondary)),
               const SizedBox(height: 8),
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                style: TextStyle(color: textColor),
+                style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                 decoration: const InputDecoration(
                     hintText: "your@email.com",
                     prefixIcon: Icon(Icons.email_outlined, size: 20)),
               ),
               const SizedBox(height: 24),
-
-              // Password label
-              Text("Password",
+              const Text("Password",
                   style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
-                      color: secondaryText)),
+                      color: AppColors.textSecondary)),
               const SizedBox(height: 8),
               TextField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
-                style: TextStyle(color: textColor),
+                style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                 decoration: InputDecoration(
                   hintText: "Enter your password",
                   prefixIcon: const Icon(Icons.lock_outline, size: 20),
@@ -142,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
                         size: 20,
-                        color: secondaryText),
+                        color: AppColors.textMuted),
                     onPressed: () =>
                         setState(() => _obscurePassword = !_obscurePassword),
                   ),
@@ -155,37 +142,31 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () {}, child: const Text("Forgot Password?")),
               ),
               const SizedBox(height: 24),
-
-              // Sign In button — gold primary like frontend .btn-primary
               Consumer<AuthProvider>(
                 builder: (ctx, auth, _) {
                   return ElevatedButton(
                     onPressed: auth.isLoading ? null : _handleLogin,
                     child: auth.isLoading
-                        ? SizedBox(
+                        ? const SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
-                                strokeWidth: 2, color: AppColors.dark))
+                                strokeWidth: 2, color: Colors.black))
                         : const Text("Sign In"),
                   );
                 },
               ),
               const SizedBox(height: 24),
-
-              // Divider with "or"
               Row(children: [
-                Expanded(child: Divider(color: isDark ? AppColors.divider : AppColors.borderLight)),
+                Expanded(child: Divider(color: AppColors.divider)),
                 Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text("or",
                         style: TextStyle(
-                            color: secondaryText, fontSize: 13))),
-                Expanded(child: Divider(color: isDark ? AppColors.divider : AppColors.borderLight)),
+                            color: AppColors.textMuted, fontSize: 13))),
+                Expanded(child: Divider(color: AppColors.divider)),
               ]),
               const SizedBox(height: 24),
-
-              // Create Account — outline button like frontend .btn-outline
               OutlinedButton(
                 onPressed: () => Navigator.pushNamed(context, '/register'),
                 child: const Text("Create Account"),

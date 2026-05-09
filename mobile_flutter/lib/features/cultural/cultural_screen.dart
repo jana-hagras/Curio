@@ -7,7 +7,6 @@ class CulturalScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(title: const Text("Cultural Stories")),
       body: ListView(
         padding: const EdgeInsets.all(16),

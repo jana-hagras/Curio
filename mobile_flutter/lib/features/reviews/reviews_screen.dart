@@ -7,7 +7,6 @@ class ReviewsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(title: const Text("Reviews")),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),

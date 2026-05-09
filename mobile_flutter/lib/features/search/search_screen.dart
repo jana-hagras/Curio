@@ -28,7 +28,6 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Container(
           height: 44,

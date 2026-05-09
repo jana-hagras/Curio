@@ -23,14 +23,13 @@ class _CustomOrderScreenState extends State<CustomOrderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(title: const Text("Custom Request")),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Create a Custom\nRequest", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, fontFamily: 'Playfair', height: 1.3)),
+            const Text("Create a Custom\nRequest", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, height: 1.3)),
             const SizedBox(height: 8),
             const Text("Describe the piece you want and an artisan will bring it to life.", style: TextStyle(color: AppColors.textSecondary, height: 1.5)),
             const SizedBox(height: 28),

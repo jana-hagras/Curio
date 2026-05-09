@@ -14,7 +14,6 @@ class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(title: const Text("My Cart")),
       body: Consumer<CartProvider>(
         builder: (ctx, cartProvider, _) {

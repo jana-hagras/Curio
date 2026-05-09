@@ -240,7 +240,6 @@ class _SplashScreenState extends State<SplashScreen>
                           fontSize: 44,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 12,
-                          fontFamily: 'Playfair',
                           shadows: [
                             Shadow(
                               color: AppColors.gold.withValues(
