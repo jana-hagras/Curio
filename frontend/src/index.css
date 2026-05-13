@@ -102,11 +102,6 @@
   --container-max: 1280px;
   --container-narrow: 960px;
 
-  /* ── Chat Colors ── */
-  --chat-sent: #D4A843;
-  --chat-received: #F0F0F0;
-  --chat-sent-text: #FFFFFF;
-  --chat-received-text: #0A0A0A;
 }
 
 [data-theme="dark"] {
@@ -136,8 +131,7 @@
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
 
-  --chat-received: #252525;
-  --chat-received-text: #E8E8E8;
+
 
   /* Status colors for dark mode - softer backgrounds */
   --error-light: #3B1C1C;

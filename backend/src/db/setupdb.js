@@ -1,5 +1,8 @@
 import mysql from 'mysql2/promise';
+import bcrypt from 'bcrypt';
 import pool from './connection.js';
+
+const SALT_ROUNDS = 10;
 
 // Function to create all tables
 const createAllTables = async (conn) => {
@@ -165,6 +168,52 @@ const createAllTables = async (conn) => {
     console.log("All tables created/verified successfully ✅");
 };
 
+// Ensure the user.Type ENUM includes 'Admin' (for pre-existing databases)
+const ensureAdminEnum = async (conn) => {
+    await conn.query(
+        `ALTER TABLE user MODIFY COLUMN Type ENUM('Buyer', 'Artisan', 'Admin') NOT NULL`
+    );
+    console.log("User Type ENUM updated to include Admin ✅");
+};
+
+// Seed admin account from environment variables
+const seedAdmin = async (conn) => {
+    const email = (process.env.ADMIN_EMAIL || 'admin@curio.com').trim().toLowerCase();
+    const password = process.env.ADMIN_PASSWORD || 'Admin123!';
+    const fName = process.env.ADMIN_FNAME || 'System';
+    const lName = process.env.ADMIN_LNAME || 'Admin';
+
+    // Check if admin already exists
+    const [existing] = await conn.query(
+        'SELECT User_id, Type FROM user WHERE Email = ? LIMIT 1',
+        [email]
+    );
+
+    if (existing.length) {
+        // Fix admin type if it was stored as empty string (pre-ENUM-migration)
+        if (!existing[0].Type || existing[0].Type !== 'Admin') {
+            await conn.query(
+                'UPDATE user SET Type = ? WHERE User_id = ?',
+                ['Admin', existing[0].User_id]
+            );
+            console.log(`Admin account type fixed (${email}) 🔧`);
+        } else {
+            console.log(`Admin account already exists (${email}) ✅`);
+        }
+        return;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+
+    await conn.query(
+        `INSERT INTO user (FName, LName, Email, Password, Type, JoinDate)
+         VALUES (?, ?, ?, ?, 'Admin', CURRENT_DATE)`,
+        [fName, lName, email, hashedPassword]
+    );
+
+    console.log(`Admin account seeded (${email}) 🔑`);
+};
+
 
 // Initialize database at startup
 export const initDatabase = async () => {
@@ -184,6 +233,8 @@ export const initDatabase = async () => {
     const conn = await pool.getConnection();
     try {
         await createAllTables(conn);
+        await ensureAdminEnum(conn);
+        await seedAdmin(conn);
 
 
     } finally {

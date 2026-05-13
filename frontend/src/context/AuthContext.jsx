@@ -61,6 +61,7 @@ export function AuthProvider({ children }) {
     isAuthenticated: !!user,
     isBuyer: user?.type === 'Buyer',
     isArtisan: user?.type === 'Artisan',
+    isAdmin: user?.type === 'Admin',
     login,
     register,
     logout,

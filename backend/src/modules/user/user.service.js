@@ -352,7 +352,7 @@ export const updateUser = async (req, res, next) => {
     const userId = Number(req.query.id);
     if (!userId) return res.status(400).json({ ok: false, message: "Query parameter 'id' is required." });
 
-    const { fName, mName, lName, address, phone, profileImage, country, bio, status } = req.body;
+    const { fName, mName, lName, address, phone, profileImage, country, bio, status, verified } = req.body;
 
     // ── Validate ──
     const errors = validateUpdate({ fName, mName, lName, phone, address, profileImage, country, bio, status });
@@ -382,7 +382,8 @@ export const updateUser = async (req, res, next) => {
       if (user.Type === "Buyer") {
         await conn.query("UPDATE Buyer SET Country = COALESCE(?, Country) WHERE Buyer_id = ?", [country?.trim() ?? null, userId]);
       } else {
-        await conn.query("UPDATE Artisan SET Bio = COALESCE(?, Bio), Status = COALESCE(?, Status) WHERE Artisan_id = ?", [bio?.trim() ?? null, status?.trim() ?? null, userId]);
+        const verifiedVal = verified !== undefined ? (verified ? 1 : 0) : null;
+        await conn.query("UPDATE Artisan SET Bio = COALESCE(?, Bio), Status = COALESCE(?, Status), Verified = COALESCE(?, Verified) WHERE Artisan_id = ?", [bio?.trim() ?? null, status?.trim() ?? null, verifiedVal, userId]);
       }
 
       await conn.commit();

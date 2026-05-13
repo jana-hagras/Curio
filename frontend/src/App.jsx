@@ -6,6 +6,7 @@ import { FavoritesProvider } from './context/FavoritesContext';
 import { ThemeProvider } from './context/ThemeContext';
 import Layout from './components/layout/Layout';
 import DashboardLayout from './components/layout/DashboardLayout';
+import AdminLayout from './components/layout/AdminLayout';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 
 // Public Pages
@@ -38,13 +39,26 @@ import MyPortfolioPage from './pages/artisan/MyPortfolioPage';
 import MyApplicationsPage from './pages/artisan/MyApplicationsPage';
 import WalletPage from './pages/artisan/WalletPage';
 
+// Admin Pages
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminUsersPage from './pages/admin/AdminUsersPage';
+import AdminProductsPage from './pages/admin/AdminProductsPage';
+import AdminOrdersPage from './pages/admin/AdminOrdersPage';
+import AdminRequestsPage from './pages/admin/AdminRequestsPage';
+import AdminApplicationsPage from './pages/admin/AdminApplicationsPage';
+import AdminReviewsPage from './pages/admin/AdminReviewsPage';
+import AdminPaymentsPage from './pages/admin/AdminPaymentsPage';
+import AdminPlaceholder from './pages/admin/AdminPlaceholder';
+
 // Shared
 import ProfilePage from './pages/shared/ProfilePage';
-import ChatPage from './pages/shared/ChatPage';
 import { useAuth } from './hooks/useAuth';
 
 function DashboardRouter() {
-  const { isBuyer, isArtisan } = useAuth();
+  const { isBuyer, isArtisan, isAdmin } = useAuth();
+
+  // Admin users should use /admin routes, not /dashboard
+  if (isAdmin) return <Navigate to="/admin" replace />;
 
   if (isBuyer) {
     return (
@@ -56,7 +70,7 @@ function DashboardRouter() {
         <Route path="/payments" element={<MyPaymentsPage />} />
         <Route path="/favorites" element={<FavoritesPage />} />
         <Route path="/proposals" element={<ProposalsPage />} />
-        <Route path="/chat" element={<ChatPage />} />
+
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
@@ -72,7 +86,7 @@ function DashboardRouter() {
         <Route path="/portfolio" element={<MyPortfolioPage />} />
         <Route path="/applications" element={<MyApplicationsPage />} />
         <Route path="/wallet" element={<WalletPage />} />
-        <Route path="/chat" element={<ChatPage />} />
+
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
@@ -116,6 +130,19 @@ export default function App() {
               <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
                 <Route index element={<DashboardRouter />} />
                 <Route path="*" element={<DashboardRouter />} />
+              </Route>
+
+              <Route path="/admin" element={<ProtectedRoute requiredType="Admin"><AdminLayout /></ProtectedRoute>}>
+                <Route index element={<AdminDashboard />} />
+                <Route path="users" element={<AdminUsersPage />} />
+                <Route path="products" element={<AdminProductsPage />} />
+                <Route path="orders" element={<AdminOrdersPage />} />
+                <Route path="requests" element={<AdminRequestsPage />} />
+                <Route path="applications" element={<AdminApplicationsPage />} />
+                <Route path="reviews" element={<AdminReviewsPage />} />
+                <Route path="payments" element={<AdminPaymentsPage />} />
+                <Route path="settings" element={<AdminPlaceholder title="Settings" />} />
+                <Route path="*" element={<Navigate to="/admin" replace />} />
               </Route>
             </Routes>
           </Router>

@@ -11,7 +11,7 @@ import {
   FiSun,
   FiMoon,
   FiHeart,
-  FiMessageCircle,
+
   FiFileText,
   FiHome,
   FiList,
@@ -25,7 +25,7 @@ import "./Navbar.css";
 import logo from "../../assets/logo.png";
 
 export default function Navbar() {
-  const { user, isAuthenticated, logout, isBuyer, isArtisan } = useAuth();
+  const { user, isAuthenticated, logout, isBuyer, isArtisan, isAdmin } = useAuth();
   const { totalItems } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
@@ -63,7 +63,7 @@ export default function Navbar() {
         { path: "/dashboard/requests", label: "Requests", icon: FiFileText },
         { path: "/dashboard/proposals", label: "Proposals", icon: FiInbox },
         { path: "/dashboard/favorites", label: "Favorites", icon: FiHeart },
-        { path: "/dashboard/chat", label: "Chat", icon: FiMessageCircle },
+
       ];
     }
 
@@ -72,7 +72,13 @@ export default function Navbar() {
         { path: "/dashboard", label: "Dashboard", icon: FiGrid },
         { path: "/dashboard/applications", label: "Orders", icon: FiBriefcase },
         { path: "/requests", label: "Requests", icon: FiFileText },
-        { path: "/dashboard/chat", label: "Chat", icon: FiMessageCircle },
+
+      ];
+    }
+
+    if (isAdmin) {
+      return [
+        { path: '/admin', label: 'Dashboard', icon: FiGrid },
       ];
     }
 
@@ -179,12 +185,13 @@ export default function Navbar() {
                     </div>
                     <div className="navbar-dropdown-divider" />
                     <Link
-                      to="/dashboard"
+                      to={isAdmin ? '/admin' : '/dashboard'}
                       className="navbar-dropdown-item"
                       onClick={() => setDropdownOpen(false)}
                     >
                       <FiGrid /> Dashboard
                     </Link>
+                    {!isAdmin && (
                     <Link
                       to="/dashboard/profile"
                       className="navbar-dropdown-item"
@@ -192,6 +199,7 @@ export default function Navbar() {
                     >
                       <FiUser /> Profile
                     </Link>
+                    )}
                     <div className="navbar-dropdown-divider" />
                     <button
                       className="navbar-dropdown-item navbar-dropdown-logout"

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import Input from "../../components/ui/Input";
@@ -12,8 +12,15 @@ export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, isAuthenticated, isAdmin } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect authenticated users away from login page
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(isAdmin ? "/admin" : "/dashboard", { replace: true });
+    }
+  }, [isAuthenticated, isAdmin, navigate]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -35,7 +42,11 @@ export default function LoginPage() {
       const userData = await login(form.email, form.password);
       toast.success("Welcome back!");
       // Role-based redirect
-      navigate("/dashboard");
+      if (userData.type === 'Admin') {
+        navigate("/admin", { replace: true });
+      } else {
+        navigate("/dashboard", { replace: true });
+      }
     } catch (err) {
       toast.error(err.message || "Login failed");
       if (err.errors?.length) {
