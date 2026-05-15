@@ -17,6 +17,29 @@ function StatusBadge({ status, type = 'order' }) {
   return <span className={`admin-badge ${map[status] || 'badge-blue'}`}>{status || '—'}</span>;
 }
 
+/* ── Payment Method Chip ─────────────────────── */
+const METHOD_META = {
+  Visa:       { color: '#1a1f71', bg: '#e8eaf6', label: 'Visa' },
+  MasterCard: { color: '#eb001b', bg: '#fde8e8', label: 'MC' },
+  PayPal:     { color: '#003087', bg: '#e8f0fb', label: 'PayPal' },
+  Cash:       { color: '#166534', bg: '#dcfce7', label: 'Cash' },
+};
+function PaymentMethodChip({ method }) {
+  if (!method) return <span style={{ color: 'var(--text-tertiary)' }}>—</span>;
+  const meta = METHOD_META[method] || { color: 'var(--text-secondary)', bg: 'var(--surface-secondary)', label: method };
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: 4,
+      padding: '3px 9px', borderRadius: 20, fontSize: 11, fontWeight: 700,
+      letterSpacing: '0.4px',
+      color: meta.color, background: meta.bg,
+    }}>
+      <FiCreditCard size={10} />
+      {meta.label}
+    </span>
+  );
+}
+
 /* ── Detail Modal ────────────────────────────── */
 function DetailModal({ order: o, onClose, onDelete }) {
   if (!o) return null;
@@ -251,10 +274,7 @@ export default function AdminOrdersPage() {
                   </td>
                   <td style={{ fontWeight: 600 }}>{formatCurrency(o.totalAmount)}</td>
                   <td>
-                    <div className="admin-cell-stack">
-                      <span className="admin-cell-stack-primary">{o.paymentMethod || '—'}</span>
-                      <StatusBadge status={o.paymentStatus} />
-                    </div>
+                    <PaymentMethodChip method={o.paymentMethod} />
                   </td>
                   <td><StatusBadge status={o.status} /></td>
                   <td>
