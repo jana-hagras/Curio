@@ -148,17 +148,79 @@ export const getApplicationById = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// UPDATE
+// UPDATE (with auto-milestone generation on approval)
 export const updateApplication = async (req, res, next) => {
   try {
     const id = Number(req.query.id);
     if (!id) return res.status(400).json({ ok: false, message: "Query parameter 'id' is required." });
 
     const { proposal, status } = req.body;
+
+    // Fetch current application before update
+    const [currentRows] = await pool.query(`${APP_QUERY} WHERE ap.Application_id = ?`, [id]);
+    if (!currentRows.length) return res.status(404).json({ ok: false, message: "Application not found." });
+    
+    const current = currentRows[0];
+    const wasApproved = current.Status === 'Approved';
+    const isBeingApproved = status === 'Approved' && !wasApproved;
+
+    // Update the application
     await pool.query(
       "UPDATE Application SET Proposal=COALESCE(?,Proposal), Status=COALESCE(?,Status) WHERE Application_id=?",
       [proposal, status, id]
     );
+
+    // If being approved, auto-generate milestones and reject others
+    if (isBeingApproved) {
+      const requestId = current.Request_id;
+      const artisanId = current.Artisan_id;
+
+      // 1. Reject all other pending applications for this request
+      await pool.query(
+        "UPDATE Application SET Status = 'Rejected' WHERE Request_id = ? AND Application_id != ? AND Status = 'Pending'",
+        [requestId, id]
+      );
+
+      // 2. Get request budget
+      const [reqRows] = await pool.query("SELECT Budget FROM Request WHERE Request_id = ?", [requestId]);
+      const budget = Number(reqRows[0]?.Budget || 0);
+
+      // 3. Check if milestones already exist for this request
+      const [existingMilestones] = await pool.query(
+        "SELECT Milestone_id FROM Milestone WHERE Request_id = ?",
+        [requestId]
+      );
+
+      // 4. Auto-generate 5 default milestones (only if none exist yet)
+      if (existingMilestones.length === 0) {
+        const milestoneTitles = [
+          { title: 'Project Kickoff', desc: 'Project kickoff and initial planning phase' },
+          { title: 'Design Phase', desc: 'Design concepts and approval phase' },
+          { title: 'Production', desc: 'Main production and crafting phase' },
+          { title: 'Quality Review', desc: 'Quality inspection and refinements phase' },
+          { title: 'Delivery', desc: 'Final delivery and handover phase' },
+        ];
+
+        const milestoneShare = budget > 0 ? parseFloat((budget / milestoneTitles.length).toFixed(2)) : 0;
+        const now = new Date();
+
+        for (let i = 0; i < milestoneTitles.length; i++) {
+          const due = new Date(now);
+          due.setDate(due.getDate() + (i + 1) * 7);
+
+          // Last milestone gets remaining amount to avoid rounding issues
+          const amount = (i === milestoneTitles.length - 1 && budget > 0)
+            ? parseFloat((budget - milestoneShare * (milestoneTitles.length - 1)).toFixed(2))
+            : milestoneShare;
+
+          await pool.query(
+            "INSERT INTO Milestone (Request_id, Artisan_id, Title, Description, DueDate, EscrowAmount, Status) VALUES (?, ?, ?, ?, ?, ?, 'Pending')",
+            [requestId, artisanId, milestoneTitles[i].title, milestoneTitles[i].desc, due.toISOString().slice(0, 10), amount]
+          );
+        }
+      }
+    }
+
     return getApplicationById(req, res, next);
   } catch (err) { next(err); }
 };

@@ -64,7 +64,7 @@ function DetailModal({ order: o, onClose, onDelete }) {
             <div style={{ background: 'var(--surface-secondary)', padding: '14px 16px', borderRadius: 'var(--radius-md)' }}>
               <div style={{ fontSize: 11, color: 'var(--text-tertiary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 4 }}><FiCreditCard size={11} /> Payment</div>
               <p style={{ fontWeight: 600, fontSize: 14 }}>{formatCurrency(o.totalAmount)}</p>
-              <p style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{o.paymentMethod || '—'} · <StatusBadge status={o.paymentStatus} /></p>
+              <p style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{o.paymentMethod || '—'}</p>
             </div>
           </div>
           {/* Address */}
@@ -246,7 +246,7 @@ export default function AdminOrdersPage() {
                 <th>Date</th>
                 <th>Address</th>
                 <th>Amount</th>
-                <th>Payment</th>
+                <th>Payment Method</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>

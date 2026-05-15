@@ -292,6 +292,7 @@ export const initDatabase = async () => {
         await migratePaymentTable(conn);
         await migrateReviewTable(conn);
         await migrateOrderTable(conn);
+        await migrateMilestoneTable(conn);
 
     } finally {
         conn.release();
@@ -320,3 +321,23 @@ async function migrateOrderTable(conn) {
     }
     console.log("Order table migration complete ✅");
 }
+
+// ─── Milestone table migration: add Artisan_id column ───
+async function migrateMilestoneTable(conn) {
+    const [columns] = await conn.query(
+        "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'CURIO' AND TABLE_NAME = 'Milestone'"
+    );
+    const existing = new Set(columns.map(c => c.COLUMN_NAME));
+
+    if (!existing.has('Artisan_id')) {
+        try {
+            await conn.query(
+                "ALTER TABLE Milestone ADD COLUMN Artisan_id INT, ADD FOREIGN KEY (Artisan_id) REFERENCES Artisan(Artisan_id) ON DELETE SET NULL"
+            );
+            console.log("  ✅ Added Milestone.Artisan_id");
+        } catch (e) {
+            if (!e.message.includes('Duplicate column')) console.warn("  ⚠️ Milestone migration warning:", e.message);
+        }
+    }
+    console.log("Milestone table migration complete ✅");
+}
