@@ -3,6 +3,7 @@ import api from './api';
 export const milestoneService = {
   create: (data) => api.post('/milestones/', data),
   getByRequest: (requestId) => api.get(`/milestones/request?request_id=${requestId}`),
+  getByApplication: (applicationId) => api.get(`/milestones/application?application_id=${applicationId}`),
   getById: (id) => api.get(`/milestones/?id=${id}`),
   update: (id, data) => api.put(`/milestones/?id=${id}`, data),
   complete: (id) => api.put(`/milestones/complete?id=${id}`, {}),

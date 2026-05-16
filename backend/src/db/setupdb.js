@@ -322,13 +322,14 @@ async function migrateOrderTable(conn) {
     console.log("Order table migration complete ✅");
 }
 
-// ─── Milestone table migration: add Artisan_id column ───
+// ─── Milestone table migration: add Application_id column + backfill ───
 async function migrateMilestoneTable(conn) {
     const [columns] = await conn.query(
         "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'CURIO' AND TABLE_NAME = 'Milestone'"
     );
     const existing = new Set(columns.map(c => c.COLUMN_NAME));
 
+    // Step 1: Add Artisan_id if missing (older migration, kept for safety)
     if (!existing.has('Artisan_id')) {
         try {
             await conn.query(
@@ -339,5 +340,45 @@ async function migrateMilestoneTable(conn) {
             if (!e.message.includes('Duplicate column')) console.warn("  ⚠️ Milestone migration warning:", e.message);
         }
     }
+
+    // Step 2: Add Application_id column if missing
+    if (!existing.has('Application_id')) {
+        try {
+            await conn.query(
+                "ALTER TABLE Milestone ADD COLUMN Application_id INT, ADD CONSTRAINT fk_milestone_application FOREIGN KEY (Application_id) REFERENCES Application(Application_id) ON DELETE SET NULL"
+            );
+            console.log("  ✅ Added Milestone.Application_id");
+        } catch (e) {
+            if (!e.message.includes('Duplicate column') && !e.message.includes('Duplicate key')) {
+                console.warn("  ⚠️ Milestone Application_id migration warning:", e.message);
+            }
+        }
+    }
+
+    // Step 3: Backfill BOTH Artisan_id and Application_id for existing milestone rows.
+    // We join ONLY on Request_id because:
+    //   - Only ONE application per request can have Status='Approved'
+    //   - Legacy milestone rows have Artisan_id = NULL (inserted before the column existed)
+    //     so we cannot join on Artisan_id — that would match nothing.
+    try {
+        const [backfillResult] = await conn.query(`
+            UPDATE Milestone m
+            INNER JOIN Application ap
+                ON  ap.Request_id = m.Request_id
+                AND ap.Status     = 'Approved'
+            SET m.Application_id = ap.Application_id,
+                m.Artisan_id     = ap.Artisan_id
+            WHERE m.Application_id IS NULL
+               OR m.Artisan_id     IS NULL
+        `);
+        if (backfillResult.affectedRows > 0) {
+            console.log(`  ✅ Backfilled Milestone.Application_id + Artisan_id for ${backfillResult.affectedRows} row(s)`);
+        } else {
+            console.log("  ✅ Milestone backfill: all rows already have Application_id + Artisan_id");
+        }
+    } catch (e) {
+        console.warn("  ⚠️ Milestone backfill warning:", e.message);
+    }
+
     console.log("Milestone table migration complete ✅");
 }

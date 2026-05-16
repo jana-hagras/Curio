@@ -7,6 +7,7 @@ const router = Router();
 // Read routes — open to all roles
 router.get("/search", Milestone.searchMilestones);
 router.get("/request", Milestone.getMilestonesByRequest);
+router.get("/application", Milestone.getMilestonesByApplication);
 router.get("/", Milestone.getMilestoneById);
 
 // Mutation routes — artisan-only with ownership validation

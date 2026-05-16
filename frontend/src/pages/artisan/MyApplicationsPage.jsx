@@ -72,10 +72,21 @@ export default function MyApplicationsPage() {
   };
 
   const handleSaveEdit = async (milestoneId, requestId) => {
+    const payload = {};
+    // Only include fields that have actual values — never send empty strings
+    // as they would overwrite existing DB data (even with NULLIF on backend,
+    // we want a clean payload to avoid accidental field clearing).
+    if (editForm.title.trim())       payload.title = editForm.title.trim();
+    if (editForm.description.trim()) payload.description = editForm.description.trim();
+    if (editForm.escrowAmount !== '') payload.escrowAmount = Number(editForm.escrowAmount);
+    if (editForm.dueDate)            payload.dueDate = editForm.dueDate;
+
+    if (Object.keys(payload).length === 0) {
+      toast.error('No changes to save');
+      return;
+    }
+
     try {
-      const payload = { title: editForm.title, description: editForm.description };
-      if (editForm.escrowAmount !== '') payload.escrowAmount = Number(editForm.escrowAmount);
-      if (editForm.dueDate) payload.dueDate = editForm.dueDate;
       await milestoneService.update(milestoneId, payload);
       await loadMilestones(requestId);
       setEditingMilestone(null);

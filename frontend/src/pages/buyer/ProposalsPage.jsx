@@ -124,7 +124,7 @@ export default function ProposalsPage() {
 
             return (
               <div key={req.id} style={{ background: 'var(--surface-primary)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--surface-border)', overflow: 'hidden' }}>
-                <div onClick={() => { setExpandedReq(isExpanded ? null : req.id); if (!isExpanded && !reqMilestones.length) loadMilestones(req.id); }}
+                <div onClick={() => { setExpandedReq(isExpanded ? null : req.id); if (!isExpanded) loadMilestones(req.id); }}
                   style={{ padding: '20px 24px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: isExpanded ? '1px solid var(--surface-border)' : 'none' }}>
                   <div>
                     <h3 style={{ fontSize: 18, fontFamily: 'var(--font-body)', fontWeight: 600, marginBottom: 4 }}>{req.title}</h3>

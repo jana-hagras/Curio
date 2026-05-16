@@ -6,6 +6,7 @@ const sanitizeMilestone = (row) => {
     id: row.Milestone_id,
     request_id: row.Request_id,
     artisan_id: row.Artisan_id,
+    application_id: row.Application_id,
     title: row.Title,
     description: row.Description,
     dueDate: row.DueDate,
@@ -20,6 +21,14 @@ const sanitizeMilestone = (row) => {
 // Updates the Payment record to match milestone totals
 // =============================
 async function recalcEscrow(requestId) {
+  // Check if a Payment (escrow) record exists yet — it may not if the buyer hasn't
+  // completed checkout yet. In that case, skip gracefully rather than silently failing.
+  const [payRows] = await pool.query(
+    "SELECT Payment_id FROM Payment WHERE Request_id = ? AND PaymentType = 'escrow' LIMIT 1",
+    [requestId]
+  );
+  if (!payRows.length) return; // No escrow payment yet — nothing to recalculate
+
   // Sum of pending milestone escrow amounts (not yet completed)
   const [pendingRows] = await pool.query(
     "SELECT COALESCE(SUM(EscrowAmount), 0) AS total FROM Milestone WHERE Request_id = ? AND Status != 'Completed'",
@@ -183,22 +192,51 @@ export const updateMilestone = async (req, res, next) => {
 
     // Block editing completed milestones
     const [existing] = await pool.query("SELECT * FROM Milestone WHERE Milestone_id = ?", [id]);
-    if (existing.length && existing[0].Status === 'Completed') {
+    if (!existing.length) return res.status(404).json({ ok: false, message: "Milestone not found." });
+    if (existing[0].Status === 'Completed') {
       return res.status(400).json({ ok: false, message: "Cannot edit a completed milestone." });
     }
 
-    const { title, description, dueDate, escrowAmount, escrowReleaseDate, status } = req.body;
+    const { title, description, dueDate, escrowAmount, status } = req.body;
+
+    // NULLIF(?, '') converts empty strings to NULL so COALESCE preserves the existing
+    // DB value instead of overwriting with an empty string. This is the fix for the
+    // "edit appears on frontend but DB value is wiped" bug.
     await pool.query(
-      "UPDATE Milestone SET Title=COALESCE(?,Title), Description=COALESCE(?,Description), DueDate=COALESCE(?,DueDate), EscrowAmount=COALESCE(?,EscrowAmount), EscrowReleaseDate=COALESCE(?,EscrowReleaseDate), Status=COALESCE(?,Status) WHERE Milestone_id=?",
-      [title, description, dueDate, escrowAmount, escrowReleaseDate, status, id]
+      `UPDATE Milestone SET
+        Title         = COALESCE(NULLIF(?, ''), Title),
+        Description   = COALESCE(NULLIF(?, ''), Description),
+        DueDate       = COALESCE(NULLIF(?, ''), DueDate),
+        EscrowAmount  = COALESCE(NULLIF(?, ''), EscrowAmount),
+        Status        = COALESCE(NULLIF(?, ''), Status)
+       WHERE Milestone_id = ?`,
+      [title ?? null, description ?? null, dueDate ?? null, escrowAmount ?? null, status ?? null, id]
     );
 
-    // Recalculate escrow if amount changed
-    if (escrowAmount !== undefined && existing.length) {
+    // Recalculate escrow totals on the Payment record if amount changed
+    if (escrowAmount !== undefined) {
       await recalcEscrow(existing[0].Request_id);
     }
 
     return getMilestoneById(req, res, next);
+  } catch (err) { next(err); }
+};
+
+// =============================
+// 📋 GET MILESTONES BY APPLICATION
+// =============================
+export const getMilestonesByApplication = async (req, res, next) => {
+  try {
+    const applicationId = Number(req.query.application_id);
+    if (!applicationId) {
+      return res.status(400).json({ ok: false, message: "Query parameter 'application_id' is required." });
+    }
+
+    const [rows] = await pool.query(
+      "SELECT * FROM Milestone WHERE Application_id = ? ORDER BY DueDate ASC, Milestone_id ASC",
+      [applicationId]
+    );
+    return res.status(200).json({ ok: true, data: { milestones: rows.map(sanitizeMilestone) } });
   } catch (err) { next(err); }
 };
 

@@ -193,6 +193,16 @@ export const updateApplication = async (req, res, next) => {
 
       // 4. Auto-generate 5 default milestones (only if none exist yet)
       if (existingMilestones.length === 0) {
+
+        // Safety check: artisanId must be a valid integer.
+        // current.Artisan_id comes from ap.* in APP_QUERY — this is the Application table's column.
+        if (!artisanId) {
+          console.error(`[Milestone Auto-Gen] Cannot generate milestones: artisanId is ${artisanId} for application ${id}. Aborting.`);
+          return getApplicationById(req, res, next);
+        }
+
+        console.log(`[Milestone Auto-Gen] Generating 5 milestones for request=${requestId}, artisan=${artisanId}, application=${id}`);
+
         const milestoneTitles = [
           { title: 'Project Kickoff', desc: 'Project kickoff and initial planning phase' },
           { title: 'Design Phase', desc: 'Design concepts and approval phase' },
@@ -214,10 +224,12 @@ export const updateApplication = async (req, res, next) => {
             : milestoneShare;
 
           await pool.query(
-            "INSERT INTO Milestone (Request_id, Artisan_id, Title, Description, DueDate, EscrowAmount, Status) VALUES (?, ?, ?, ?, ?, ?, 'Pending')",
-            [requestId, artisanId, milestoneTitles[i].title, milestoneTitles[i].desc, due.toISOString().slice(0, 10), amount]
+            "INSERT INTO Milestone (Request_id, Artisan_id, Application_id, Title, Description, DueDate, EscrowAmount, Status) VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending')",
+            [requestId, artisanId, id, milestoneTitles[i].title, milestoneTitles[i].desc, due.toISOString().slice(0, 10), amount]
           );
         }
+
+        console.log(`[Milestone Auto-Gen] ✅ 5 milestones created for request=${requestId}`);
       }
     }
 
