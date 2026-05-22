@@ -2,7 +2,8 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import {
   FiGrid, FiUsers, FiShoppingBag, FiFileText, FiPackage,
-  FiSettings, FiBarChart2, FiShield, FiLogOut, FiStar, FiCreditCard, FiSend, FiImage
+  FiSettings, FiBarChart2, FiShield, FiLogOut, FiStar, FiCreditCard, FiSend, FiImage,
+  FiBookOpen, FiVideo
 } from 'react-icons/fi';
 import Navbar from './Navbar';
 import Footer from './Footer';
@@ -21,6 +22,8 @@ export default function AdminLayout() {
     { path: '/admin/reviews', label: 'Reviews', icon: FiStar },
     { path: '/admin/payments', label: 'Payments', icon: FiCreditCard },
     { path: '/admin/portfolios', label: 'Portfolios', icon: FiImage },
+    { path: '/admin/mentorships', label: 'Mentorships', icon: FiBookOpen },
+    { path: '/admin/workshops', label: 'Workshops', icon: FiVideo },
     { path: '/admin/settings', label: 'Settings', icon: FiSettings },
   ];
 
