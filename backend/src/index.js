@@ -11,6 +11,8 @@ dotenv.config({
 
 import { bootstrap } from "./app.controller.js";
 import { initDatabase } from "./db/setupdb.js";
+import { createServer } from 'http';
+import { initSocket } from './socket.js';
 
 const start = async () => {
     try {
@@ -22,11 +24,15 @@ const start = async () => {
     }
 
     const app = bootstrap();
-    const PORT = process.env.PORT;   
+    const PORT = process.env.PORT;
 
-    app.listen(PORT, () => {
+    // Create HTTP server and attach Socket.IO
+    const server = createServer(app);
+    initSocket(server);
+
+    server.listen(PORT, () => {
         console.log(`Server running on port ${PORT} 🚀`);
     });
 };
 
-start();
+start();

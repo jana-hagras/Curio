@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { userService } from '../../services/userService';
 import { marketItemService } from '../../services/marketItemService';
 import { portfolioService } from '../../services/portfolioService';
@@ -13,13 +13,15 @@ import Button from '../../components/ui/Button';
 import TextArea from '../../components/ui/TextArea';
 import { useAuth } from '../../hooks/useAuth';
 import { useCart } from '../../hooks/useCart';
-import { FiCheckCircle, FiMapPin, FiMail, FiStar, FiImage, FiChevronLeft, FiChevronRight, FiEdit3, FiX } from 'react-icons/fi';
+import { FiCheckCircle, FiMapPin, FiMail, FiStar, FiImage, FiChevronLeft, FiChevronRight, FiEdit3, FiX, FiMessageSquare } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import { useChat } from '../../hooks/useChat';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export default function ArtisanProfilePage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [artisan, setArtisan] = useState(null);
   const [products, setProducts] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -29,8 +31,10 @@ export default function ArtisanProfilePage() {
   const [selectedPortfolio, setSelectedPortfolio] = useState(null);
   const [galleryIdx, setGalleryIdx] = useState(0);
   const [tab, setTab] = useState('products');
-  const { user, isBuyer } = useAuth();
+  const { user, isBuyer, isAuthenticated } = useAuth();
   const { addItem } = useCart();
+  const { openPrivateChat } = useChat();
+  const [messagingArtisan, setMessagingArtisan] = useState(false);
 
   // Review form
   const [rating, setRating] = useState(0);
@@ -150,6 +154,47 @@ export default function ArtisanProfilePage() {
                 </span>
               )}
             </div>
+            {/* Message Artisan Button */}
+            {isAuthenticated && isBuyer && Number(id) !== user?.id && (
+              <div style={{ marginTop: 16 }}>
+                <button
+                  onClick={async () => {
+                    setMessagingArtisan(true);
+                    try {
+                      const chat = await openPrivateChat(Number(id));
+                      navigate(`/dashboard/chat/${chat.chat_id}`);
+                    } catch (err) {
+                      toast.error('Failed to open chat');
+                    } finally {
+                      setMessagingArtisan(false);
+                    }
+                  }}
+                  disabled={messagingArtisan}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '10px 24px',
+                    borderRadius: 'var(--radius-full)',
+                    background: 'var(--gold-gradient)',
+                    color: 'var(--black-deep)',
+                    fontWeight: 600,
+                    fontSize: 14,
+                    border: 'none',
+                    cursor: messagingArtisan ? 'wait' : 'pointer',
+                    transition: 'all 0.2s',
+                    boxShadow: 'var(--shadow-gold)',
+                    opacity: messagingArtisan ? 0.7 : 1,
+                  }}
+                  onMouseOver={e => { if (!messagingArtisan) e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                  onMouseOut={e => { e.currentTarget.style.transform = ''; }}
+                  id="message-artisan-btn"
+                >
+                  <FiMessageSquare size={16} />
+                  {messagingArtisan ? 'Opening chat...' : 'Message Artisan'}
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

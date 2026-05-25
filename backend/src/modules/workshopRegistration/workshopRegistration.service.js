@@ -1,4 +1,5 @@
 import pool from "../../db/connection.js";
+import { createWorkshopGroupChat, addMemberToWorkshopChat } from "../chat/chat.service.js";
 
 const sanitizeRegistration = (row) => {
   if (!row) return null;
@@ -121,6 +122,25 @@ export const createRegistration = async (req, res, next) => {
       "INSERT INTO WorkshopRegistration (Workshop_id, Buyer_id, RegistrationDate, Status) VALUES (?, ?, CURRENT_DATE, 'Registered')",
       [workshop_id, buyer_id]
     );
+
+    // ─── Auto group chat: create or join workshop chat ───
+    try {
+      const conn = await pool.getConnection();
+      try {
+        // Ensure chat exists (creates if first registration)
+        await createWorkshopGroupChat(conn, workshop_id, workshop[0].Artisan_id);
+        // Get buyer name for system message
+        const [buyerUser] = await conn.query('SELECT FName FROM user WHERE User_id = ?', [buyer_id]);
+        const buyerName = buyerUser[0]?.FName || 'A buyer';
+        // Add buyer to chat + system message
+        await addMemberToWorkshopChat(conn, workshop_id, buyer_id, buyerName);
+      } finally {
+        conn.release();
+      }
+    } catch (chatErr) {
+      console.warn('Workshop chat auto-sync warning:', chatErr.message);
+      // Non-blocking: registration still succeeds even if chat fails
+    }
 
     const [rows] = await pool.query(`${REG_QUERY} WHERE wr.Registration_id = ?`, [result.insertId]);
     return res.status(201).json({ ok: true, data: { registration: sanitizeRegistration(rows[0]) } });

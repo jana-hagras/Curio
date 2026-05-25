@@ -3,15 +3,17 @@ import { useAuth } from '../../hooks/useAuth';
 import {
   FiGrid, FiShoppingBag, FiFileText, FiDollarSign, FiUser,
   FiPackage, FiImage, FiSend, FiHeart, FiInbox, FiBriefcase,
-  FiBookOpen, FiCalendar
+  FiBookOpen, FiCalendar, FiMessageSquare
 } from 'react-icons/fi';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import BackButton from '../ui/BackButton';
+import { useChat } from '../../hooks/useChat';
 import './Sidebar.css';
 
 export default function DashboardLayout() {
   const { isBuyer, isArtisan } = useAuth();
+  const { totalUnread } = useChat();
 
   const buyerLinks = [
     { path: '/dashboard', label: 'Overview', icon: FiGrid, end: true },
@@ -22,6 +24,7 @@ export default function DashboardLayout() {
     { path: '/dashboard/proposals', label: 'Proposals', icon: FiInbox },
     { path: '/dashboard/favorites', label: 'Favorites', icon: FiHeart },
     { path: '/dashboard/payments', label: 'Payments', icon: FiDollarSign },
+    { path: '/dashboard/chat', label: 'Messages', icon: FiMessageSquare, badge: totalUnread },
 
     { path: '/dashboard/profile', label: 'Profile', icon: FiUser },
   ];
@@ -34,6 +37,7 @@ export default function DashboardLayout() {
     { path: '/dashboard/workshops', label: 'Workshops', icon: FiCalendar },
     { path: '/dashboard/portfolio', label: 'Portfolio', icon: FiImage },
     { path: '/dashboard/wallet', label: 'Wallet', icon: FiDollarSign },
+    { path: '/dashboard/chat', label: 'Messages', icon: FiMessageSquare, badge: totalUnread },
 
     { path: '/dashboard/profile', label: 'Profile', icon: FiUser },
   ];
@@ -58,6 +62,24 @@ export default function DashboardLayout() {
               >
                 <link.icon className="sidebar-link-icon" />
                 <span>{link.label}</span>
+                {link.badge > 0 && (
+                  <span style={{
+                    background: 'var(--gold-primary)',
+                    color: 'var(--black-deep)',
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    minWidth: '18px',
+                    height: '18px',
+                    borderRadius: '9999px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0 5px',
+                    marginLeft: 'auto',
+                  }}>
+                    {link.badge > 9 ? '9+' : link.badge}
+                  </span>
+                )}
               </NavLink>
             ))}
           </nav>

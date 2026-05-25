@@ -17,16 +17,19 @@ import {
   FiList,
   FiBriefcase,
   FiInbox,
+  FiMessageSquare,
 } from "react-icons/fi";
 import { ThemeContext } from "../../context/ThemeContext";
 import { useAuth } from "../../hooks/useAuth";
 import { useCart } from "../../hooks/useCart";
+import { useChat } from "../../hooks/useChat";
 import "./Navbar.css";
 import logo from "../../assets/logo.png";
 
 export default function Navbar() {
   const { user, isAuthenticated, logout, isBuyer, isArtisan, isAdmin } = useAuth();
   const { totalItems } = useCart();
+  const { totalUnread } = useChat();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -146,8 +149,17 @@ export default function Navbar() {
               )}
             </Link>
           )}
+          {(isBuyer || isArtisan) && (
+            <Link to="/dashboard/chat" className="navbar-cart" id="navbar-chat">
+              <FiMessageSquare />
+              {totalUnread > 0 && (
+                <span className="navbar-cart-badge">{totalUnread > 9 ? '9+' : totalUnread}</span>
+              )}
+            </Link>
+          )}
 
           {isAuthenticated ? (
+
             <div className="navbar-user-menu" ref={dropdownRef}>
               <button
                 className="navbar-user-btn"

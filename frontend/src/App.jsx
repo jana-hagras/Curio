@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { FavoritesProvider } from './context/FavoritesContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { ChatProvider } from './context/ChatContext';
 import Layout from './components/layout/Layout';
 import DashboardLayout from './components/layout/DashboardLayout';
 import AdminLayout from './components/layout/AdminLayout';
@@ -64,6 +65,7 @@ import AdminWorkshopsPage from './pages/admin/AdminWorkshopsPage';
 
 // Shared
 import ProfilePage from './pages/shared/ProfilePage';
+import ChatPage from './pages/shared/ChatPage';
 import { useAuth } from './hooks/useAuth';
 
 function DashboardRouter() {
@@ -84,6 +86,8 @@ function DashboardRouter() {
         <Route path="/proposals" element={<ProposalsPage />} />
         <Route path="/mentorships" element={<BuyerMentorshipsPage />} />
         <Route path="/workshops" element={<BuyerWorkshopsPage />} />
+        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/chat/:chatId" element={<ChatPage />} />
 
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
@@ -103,6 +107,8 @@ function DashboardRouter() {
         <Route path="/wallet" element={<WalletPage />} />
         <Route path="/mentorships" element={<ArtisanMentorshipsPage />} />
         <Route path="/workshops" element={<ArtisanWorkshopsPage />} />
+        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/chat/:chatId" element={<ChatPage />} />
 
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
@@ -119,6 +125,7 @@ export default function App() {
       <AuthProvider>
         <CartProvider>
           <FavoritesProvider>
+            <ChatProvider>
             <Router>
             <Toaster position="top-right" toastOptions={{
               style: {
@@ -169,8 +176,9 @@ export default function App() {
                 <Route path="*" element={<Navigate to="/admin" replace />} />
               </Route>
             </Routes>
-          </Router>
-          </FavoritesProvider>
+            </Router>
+            </ChatProvider>
+           </FavoritesProvider>
         </CartProvider>
        </AuthProvider>
     </ThemeProvider>

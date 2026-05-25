@@ -229,6 +229,61 @@ const createAllTables = async (conn) => {
             FOREIGN KEY (Workshop_id) REFERENCES Workshop(Workshop_id) ON DELETE CASCADE,
             FOREIGN KEY (Buyer_id) REFERENCES Buyer(Buyer_id) ON DELETE CASCADE,
             UNIQUE KEY unique_workshop_reg (Workshop_id, Buyer_id)
+        )`,
+        // ══════════════════════════════════════════
+        // CHAT SYSTEM TABLES
+        // ══════════════════════════════════════════
+        // CHAT
+        `CREATE TABLE IF NOT EXISTS Chat (
+            chat_id INT AUTO_INCREMENT PRIMARY KEY,
+            type ENUM('private','workshop','mentorship','custom_request') NOT NULL,
+            created_by INT DEFAULT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_message_id INT DEFAULT NULL,
+            last_message_at DATETIME DEFAULT NULL,
+            workshop_id INT DEFAULT NULL,
+            mentorship_id INT DEFAULT NULL,
+            FOREIGN KEY (created_by) REFERENCES user(User_id) ON DELETE SET NULL,
+            FOREIGN KEY (workshop_id) REFERENCES Workshop(Workshop_id) ON DELETE CASCADE,
+            FOREIGN KEY (mentorship_id) REFERENCES Mentorship(Mentorship_id) ON DELETE CASCADE
+        )`,
+        // CHAT MEMBER
+        `CREATE TABLE IF NOT EXISTS ChatMember (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            chat_id INT NOT NULL,
+            user_id INT NOT NULL,
+            role ENUM('member','admin') DEFAULT 'member',
+            joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_read_at DATETIME DEFAULT NULL,
+            is_active BOOLEAN DEFAULT TRUE,
+            UNIQUE KEY unique_chat_member (chat_id, user_id),
+            FOREIGN KEY (chat_id) REFERENCES Chat(chat_id) ON DELETE CASCADE,
+            FOREIGN KEY (user_id) REFERENCES user(User_id) ON DELETE CASCADE
+        )`,
+        // MESSAGE
+        `CREATE TABLE IF NOT EXISTS Message (
+            message_id INT AUTO_INCREMENT PRIMARY KEY,
+            chat_id INT NOT NULL,
+            sender_id INT NOT NULL,
+            content TEXT,
+            message_type ENUM('text','image','file','system') DEFAULT 'text',
+            attachment_url VARCHAR(500) DEFAULT NULL,
+            sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            edited_at DATETIME DEFAULT NULL,
+            deleted_at DATETIME DEFAULT NULL,
+            status ENUM('sent','delivered','read') DEFAULT 'sent',
+            FOREIGN KEY (chat_id) REFERENCES Chat(chat_id) ON DELETE CASCADE,
+            FOREIGN KEY (sender_id) REFERENCES user(User_id) ON DELETE CASCADE
+        )`,
+        // MESSAGE READ RECEIPT
+        `CREATE TABLE IF NOT EXISTS MessageReadReceipt (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            message_id INT NOT NULL,
+            user_id INT NOT NULL,
+            read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_read_receipt (message_id, user_id),
+            FOREIGN KEY (message_id) REFERENCES Message(message_id) ON DELETE CASCADE,
+            FOREIGN KEY (user_id) REFERENCES user(User_id) ON DELETE CASCADE
         )`
     ];
 
@@ -395,6 +450,7 @@ export const initDatabase = async () => {
         await migrateOrderTable(conn);
         await migrateMilestoneTable(conn);
         await migratePaymentForMentorshipWorkshop(conn);
+        await migrateChatTables(conn);
 
     } finally {
         conn.release();
@@ -483,4 +539,88 @@ async function migrateMilestoneTable(conn) {
     }
 
     console.log("Milestone table migration complete ✅");
+}
+
+// ─── Chat system tables migration (safe for existing DBs) ───
+async function migrateChatTables(conn) {
+    const chatTables = ['Chat', 'ChatMember', 'Message', 'MessageReadReceipt'];
+    const [rows] = await conn.query(
+        "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'CURIO' AND TABLE_NAME IN (?)",
+        [chatTables]
+    );
+    const existing = new Set(rows.map(r => r.TABLE_NAME));
+
+    if (chatTables.every(t => existing.has(t))) {
+        console.log("Chat tables already exist ✅");
+        return;
+    }
+
+    // Tables are created in createAllTables(), but if DB existed before chat feature,
+    // we need to create them here for safety
+    const creates = [];
+
+    if (!existing.has('Chat')) {
+        creates.push(`CREATE TABLE IF NOT EXISTS Chat (
+            chat_id INT AUTO_INCREMENT PRIMARY KEY,
+            type ENUM('private','workshop','mentorship','custom_request') NOT NULL,
+            created_by INT DEFAULT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_message_id INT DEFAULT NULL,
+            last_message_at DATETIME DEFAULT NULL,
+            workshop_id INT DEFAULT NULL,
+            mentorship_id INT DEFAULT NULL,
+            FOREIGN KEY (created_by) REFERENCES user(User_id) ON DELETE SET NULL,
+            FOREIGN KEY (workshop_id) REFERENCES Workshop(Workshop_id) ON DELETE CASCADE,
+            FOREIGN KEY (mentorship_id) REFERENCES Mentorship(Mentorship_id) ON DELETE CASCADE
+        )`);
+    }
+
+    if (!existing.has('ChatMember')) {
+        creates.push(`CREATE TABLE IF NOT EXISTS ChatMember (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            chat_id INT NOT NULL,
+            user_id INT NOT NULL,
+            role ENUM('member','admin') DEFAULT 'member',
+            joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_read_at DATETIME DEFAULT NULL,
+            is_active BOOLEAN DEFAULT TRUE,
+            UNIQUE KEY unique_chat_member (chat_id, user_id),
+            FOREIGN KEY (chat_id) REFERENCES Chat(chat_id) ON DELETE CASCADE,
+            FOREIGN KEY (user_id) REFERENCES user(User_id) ON DELETE CASCADE
+        )`);
+    }
+
+    if (!existing.has('Message')) {
+        creates.push(`CREATE TABLE IF NOT EXISTS Message (
+            message_id INT AUTO_INCREMENT PRIMARY KEY,
+            chat_id INT NOT NULL,
+            sender_id INT NOT NULL,
+            content TEXT,
+            message_type ENUM('text','image','file','system') DEFAULT 'text',
+            attachment_url VARCHAR(500) DEFAULT NULL,
+            sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            edited_at DATETIME DEFAULT NULL,
+            deleted_at DATETIME DEFAULT NULL,
+            status ENUM('sent','delivered','read') DEFAULT 'sent',
+            FOREIGN KEY (chat_id) REFERENCES Chat(chat_id) ON DELETE CASCADE,
+            FOREIGN KEY (sender_id) REFERENCES user(User_id) ON DELETE CASCADE
+        )`);
+    }
+
+    if (!existing.has('MessageReadReceipt')) {
+        creates.push(`CREATE TABLE IF NOT EXISTS MessageReadReceipt (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            message_id INT NOT NULL,
+            user_id INT NOT NULL,
+            read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_read_receipt (message_id, user_id),
+            FOREIGN KEY (message_id) REFERENCES Message(message_id) ON DELETE CASCADE,
+            FOREIGN KEY (user_id) REFERENCES user(User_id) ON DELETE CASCADE
+        )`);
+    }
+
+    for (const sql of creates) {
+        await conn.query(sql);
+    }
+    console.log("Chat system tables migration complete ✅");
 }
