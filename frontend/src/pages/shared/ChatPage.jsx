@@ -116,6 +116,8 @@ export default function ChatPage() {
   const messagesContainerRef = useRef(null);
   const textareaRef = useRef(null);
   const shouldScrollRef = useRef(true);
+  const prevMessageCountRef = useRef(0);
+  const justSentRef = useRef(false);
 
   // ─── Open chat from URL param ───
   useEffect(() => {
@@ -130,8 +132,23 @@ export default function ChatPage() {
 
   // ─── Auto-scroll to bottom on new messages ───
   useEffect(() => {
-    if (shouldScrollRef.current && messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    const prevCount = prevMessageCountRef.current;
+    const newCount = messages.length;
+    prevMessageCountRef.current = newCount;
+
+    // Only scroll when a new message was actually appended
+    if (newCount > prevCount && newCount > 0) {
+      if (justSentRef.current) {
+        // Instant scroll after sending own message
+        container.scrollTop = container.scrollHeight;
+        justSentRef.current = false;
+      } else if (shouldScrollRef.current) {
+        // Smooth-ish scroll for incoming messages when user is near bottom
+        container.scrollTop = container.scrollHeight;
+      }
     }
   }, [messages]);
 
@@ -176,6 +193,7 @@ export default function ChatPage() {
 
     setMessageText('');
     shouldScrollRef.current = true;
+    justSentRef.current = true;
 
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';

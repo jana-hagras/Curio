@@ -101,7 +101,7 @@ export const getMentorshipsByArtisan = async (req, res, next) => {
 // =============================
 export const createMentorship = async (req, res, next) => {
   try {
-    const { artisan_id, category, sessionPrice, duration, description, status, maxStudents, startDate } = req.body;
+    const { artisan_id, category, sessionPrice, duration, description, status, startDate } = req.body;
 
     if (!artisan_id || !sessionPrice || !duration) {
       return res.status(400).json({ ok: false, message: "artisan_id, sessionPrice, and duration are required." });
@@ -111,10 +111,11 @@ export const createMentorship = async (req, res, next) => {
       return res.status(400).json({ ok: false, message: "Session price cannot be negative." });
     }
 
+    // Mentorships are strictly 1-on-1
     const [result] = await pool.query(
       `INSERT INTO Mentorship (Artisan_id, Category, SessionPrice, Duration, Description, Status, MaxStudents, StartDate)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [artisan_id, category || null, sessionPrice, duration, description || null, status || 'Active', maxStudents || 10, startDate || null]
+       VALUES (?, ?, ?, ?, ?, ?, 1, ?)`,
+      [artisan_id, category || null, sessionPrice, duration, description || null, status || 'Active', startDate || null]
     );
 
     const [rows] = await pool.query(`${MENTORSHIP_QUERY} WHERE m.Mentorship_id = ?`, [result.insertId]);
@@ -130,11 +131,12 @@ export const updateMentorship = async (req, res, next) => {
     const id = Number(req.query.id);
     if (!id) return res.status(400).json({ ok: false, message: "Query parameter 'id' is required." });
 
-    const { category, sessionPrice, duration, description, status, maxStudents, startDate } = req.body;
+    const { category, sessionPrice, duration, description, status, startDate } = req.body;
 
     const [existing] = await pool.query("SELECT * FROM Mentorship WHERE Mentorship_id = ?", [id]);
     if (!existing.length) return res.status(404).json({ ok: false, message: "Mentorship not found." });
 
+    // Mentorships are strictly 1-on-1 — always force MaxStudents = 1
     await pool.query(
       `UPDATE Mentorship SET 
         Category=COALESCE(?,Category), 
@@ -142,10 +144,10 @@ export const updateMentorship = async (req, res, next) => {
         Duration=COALESCE(?,Duration),
         Description=COALESCE(?,Description),
         Status=COALESCE(?,Status),
-        MaxStudents=COALESCE(?,MaxStudents),
+        MaxStudents=1,
         StartDate=COALESCE(?,StartDate)
        WHERE Mentorship_id=?`,
-      [category, sessionPrice, duration, description, status, maxStudents, startDate, id]
+      [category, sessionPrice, duration, description, status, startDate, id]
     );
 
     const [rows] = await pool.query(`${MENTORSHIP_QUERY} WHERE m.Mentorship_id = ?`, [id]);

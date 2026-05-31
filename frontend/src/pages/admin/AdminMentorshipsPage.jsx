@@ -109,7 +109,7 @@ export default function AdminMentorshipsPage() {
                   <td style={{ padding: '12px 16px' }}>{m.category || '—'}</td>
                   <td style={{ padding: '12px 16px', color: 'var(--gold-primary)', fontWeight: 600 }}>{formatCurrency(m.sessionPrice)}</td>
                   <td style={{ padding: '12px 16px' }}>{m.duration}min</td>
-                  <td style={{ padding: '12px 16px' }}>{m.applicationCount}/{m.maxStudents}</td>
+                  <td style={{ padding: '12px 16px' }}>1-on-1</td>
                   <td style={{ padding: '12px 16px' }}><Badge status={m.status}>{m.status}</Badge></td>
                   <td style={{ padding: '12px 16px' }}>
                     <button onClick={() => handleDeleteMentorship(m.id)} style={{ color: 'var(--error)', padding: 6, borderRadius: 6 }}><FiTrash2 size={15} /></button>

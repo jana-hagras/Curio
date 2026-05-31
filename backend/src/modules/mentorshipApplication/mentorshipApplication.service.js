@@ -157,6 +157,15 @@ export const createApplication = async (req, res, next) => {
     );
     if (existing.length) return res.status(400).json({ ok: false, message: "You have already applied for this mentorship." });
 
+    // 1-on-1 capacity check: reject if there is already a non-rejected application
+    const [activeApps] = await pool.query(
+      "SELECT COUNT(*) AS cnt FROM MentorshipApplication WHERE Mentorship_id = ? AND Status NOT IN ('Rejected')",
+      [mentorship_id]
+    );
+    if (activeApps[0].cnt >= 1) {
+      return res.status(400).json({ ok: false, message: "This mentorship is a 1-on-1 session and already has a mentee." });
+    }
+
     const [result] = await pool.query(
       "INSERT INTO MentorshipApplication (Mentorship_id, Buyer_id, ApplicationDate, Message, Status) VALUES (?, ?, CURRENT_DATE, ?, 'Pending')",
       [mentorship_id, buyer_id, message || null]
@@ -183,6 +192,17 @@ export const updateApplication = async (req, res, next) => {
     const current = currentRows[0];
     const wasAccepted = current.Status === 'Accepted' || current.Status === 'AwaitingPayment';
     const isBeingAccepted = status === 'Accepted' && !wasAccepted;
+
+    // 1-on-1 conflict check: when accepting, ensure no other application is already accepted/awaiting payment
+    if (isBeingAccepted) {
+      const [conflicting] = await pool.query(
+        "SELECT COUNT(*) AS cnt FROM MentorshipApplication WHERE Mentorship_id = ? AND Application_id != ? AND Status IN ('Accepted', 'AwaitingPayment')",
+        [current.Mentorship_id, id]
+      );
+      if (conflicting[0].cnt > 0) {
+        return res.status(400).json({ ok: false, message: "This mentorship is a 1-on-1 session and already has an accepted mentee." });
+      }
+    }
 
     // When artisan accepts: set to AwaitingPayment (buyer must pay before fully accepted)
     let finalStatus = status;

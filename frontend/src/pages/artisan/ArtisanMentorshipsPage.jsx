@@ -23,7 +23,7 @@ export default function ArtisanMentorshipsPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
-  const [form, setForm] = useState({ category: '', sessionPrice: '', duration: '60', description: '', maxStudents: '10', startDate: '', status: 'Active' });
+  const [form, setForm] = useState({ category: '', sessionPrice: '', duration: '60', description: '', startDate: '', status: 'Active' });
   const [saving, setSaving] = useState(false);
 
   const loadData = () => {
@@ -38,17 +38,17 @@ export default function ArtisanMentorshipsPage() {
 
   useEffect(() => { loadData(); }, [user.id]);
 
-  const resetForm = () => setForm({ category: '', sessionPrice: '', duration: '60', description: '', maxStudents: '10', startDate: '', status: 'Active' });
+  const resetForm = () => setForm({ category: '', sessionPrice: '', duration: '60', description: '', startDate: '', status: 'Active' });
 
   const handleSave = async () => {
     if (!form.sessionPrice || !form.duration) return toast.error('Price and duration are required');
     setSaving(true);
     try {
       if (editingId) {
-        await mentorshipService.update(editingId, { ...form, sessionPrice: Number(form.sessionPrice), duration: Number(form.duration), maxStudents: Number(form.maxStudents) });
+        await mentorshipService.update(editingId, { ...form, sessionPrice: Number(form.sessionPrice), duration: Number(form.duration) });
         toast.success('Mentorship updated');
       } else {
-        await mentorshipService.create({ ...form, artisan_id: user.id, sessionPrice: Number(form.sessionPrice), duration: Number(form.duration), maxStudents: Number(form.maxStudents) });
+        await mentorshipService.create({ ...form, artisan_id: user.id, sessionPrice: Number(form.sessionPrice), duration: Number(form.duration) });
         toast.success('Mentorship created');
       }
       setShowCreateModal(false);
@@ -71,7 +71,7 @@ export default function ArtisanMentorshipsPage() {
   const handleEdit = (m) => {
     setForm({
       category: m.category || '', sessionPrice: m.sessionPrice || '', duration: m.duration || '60',
-      description: m.description || '', maxStudents: m.maxStudents || '10',
+      description: m.description || '',
       startDate: m.startDate ? new Date(m.startDate).toISOString().slice(0, 10) : '', status: m.status || 'Active',
     });
     setEditingId(m.id);
@@ -259,14 +259,10 @@ export default function ArtisanMentorshipsPage() {
               <input type="number" value={form.sessionPrice} onChange={e => setForm({ ...form, sessionPrice: e.target.value })} placeholder="e.g. 50" style={{ width: '100%', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)', background: 'var(--surface-primary)', color: 'var(--text-primary)', fontSize: 14 }} />
             </div>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             <div>
               <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, display: 'block' }}>Duration (min) *</label>
               <input type="number" value={form.duration} onChange={e => setForm({ ...form, duration: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)', background: 'var(--surface-primary)', color: 'var(--text-primary)', fontSize: 14 }} />
-            </div>
-            <div>
-              <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, display: 'block' }}>Max Students</label>
-              <input type="number" value={form.maxStudents} onChange={e => setForm({ ...form, maxStudents: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)', background: 'var(--surface-primary)', color: 'var(--text-primary)', fontSize: 14 }} />
             </div>
             <div>
               <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, display: 'block' }}>Status</label>

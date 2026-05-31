@@ -142,7 +142,7 @@ export default function MentorshipDetailPage() {
                 { icon: FiTag, label: 'Category', value: mentorship.category || 'General' },
                 { icon: FiClock, label: 'Duration', value: `${mentorship.duration} minutes` },
                 { icon: FiDollarSign, label: 'Session Price', value: formatCurrency(mentorship.sessionPrice) },
-                { icon: FiUsers, label: 'Students', value: `${mentorship.applicationCount || 0} / ${mentorship.maxStudents || 10}` },
+                { icon: FiUsers, label: 'Students', value: '1-on-1 Session' },
                 { icon: FiCalendar, label: 'Start Date', value: mentorship.startDate ? formatDate(mentorship.startDate) : 'Flexible' },
               ].map((item, i) => (
                 <div key={i} style={{

@@ -18,7 +18,6 @@ export default function MentorshipCard({ mentorship }) {
     description,
     status,
     applicationCount,
-    maxStudents,
   } = mentorship;
 
   const avatarSrc = artisanProfileImage
@@ -77,7 +76,7 @@ export default function MentorshipCard({ mentorship }) {
           </div>
           <div className="mentorship-card-meta-item">
             <FiUsers size={14} />
-            <span>{applicationCount || 0}/{maxStudents || 10}</span>
+            <span>1-on-1 Session</span>
           </div>
         </div>
         <div className="mentorship-card-price">

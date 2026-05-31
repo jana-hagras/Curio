@@ -458,7 +458,6 @@
   display: flex;
   flex-direction: column;
   max-width: 70%;
-  animation: slideUp 0.2s ease;
 }
 
 .message-row.sent {
