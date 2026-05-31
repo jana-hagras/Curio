@@ -85,7 +85,14 @@ export default function BuyerWorkshopsPage() {
                   )}
                 </div>
               </div>
-              <Badge status={r.status}>{r.status}</Badge>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <Badge status={r.status}>{r.status}</Badge>
+                {r.meetingLink && (
+                  <a href={r.meetingLink} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, color: 'var(--gold-primary)', fontWeight: 600, padding: '6px 12px', borderRadius: 'var(--radius-full)', background: 'rgba(212,168,67,0.1)', textDecoration: 'none' }}>
+                    <FiExternalLink size={13} /> Join Workshop
+                  </a>
+                )}
+              </div>
             </div>
           ))}
         </div>

@@ -5,7 +5,7 @@ import { workshopRegistrationService } from '../../services/workshopRegistration
 import { CATEGORIES } from '../../utils/constants';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { formatDate } from '../../utils/formatDate';
-import { FiPlus, FiEdit2, FiTrash2, FiUsers, FiCalendar, FiChevronDown, FiChevronUp } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiTrash2, FiUsers, FiCalendar, FiChevronDown, FiChevronUp, FiLink } from 'react-icons/fi';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import Modal from '../../components/ui/Modal';
@@ -35,7 +35,7 @@ export default function ArtisanWorkshopsPage() {
 
   useEffect(() => { loadData(); }, [user.id]);
 
-  const resetForm = () => setForm({ title: '', description: '', workshopDate: '', duration: '120', price: '', category: '', maxParticipants: '20', status: 'Upcoming' });
+  const resetForm = () => setForm({ title: '', description: '', workshopDate: '', duration: '120', price: '', category: '', maxParticipants: '20', status: 'Upcoming', meetingLink: '' });
 
   const handleSave = async () => {
     if (!form.title) return toast.error('Title is required');
@@ -61,8 +61,18 @@ export default function ArtisanWorkshopsPage() {
   };
 
   const handleEdit = (w) => {
-    setForm({ title: w.title || '', description: w.description || '', workshopDate: w.workshopDate ? new Date(w.workshopDate).toISOString().slice(0, 10) : '', duration: w.duration || '120', price: w.price || '', category: w.category || '', maxParticipants: w.maxParticipants || '20', status: w.status || 'Upcoming' });
+    setForm({ title: w.title || '', description: w.description || '', workshopDate: w.workshopDate ? new Date(w.workshopDate).toISOString().slice(0, 10) : '', duration: w.duration || '120', price: w.price || '', category: w.category || '', maxParticipants: w.maxParticipants || '20', status: w.status || 'Upcoming', meetingLink: w.meetingLink || '' });
     setEditingId(w.id); setShowModal(true);
+  };
+
+  const handleMeetingLink = async (w) => {
+    const link = prompt('Enter meeting link (Zoom, Google Meet, Teams, etc.):', w.meetingLink || '');
+    if (link === null) return; // cancelled
+    try {
+      await workshopService.update(w.id, { meetingLink: link || null });
+      toast.success(link ? 'Meeting link updated' : 'Meeting link removed');
+      loadData();
+    } catch (err) { toast.error(err.message || 'Failed to update meeting link'); }
   };
 
   if (loading) return <DashboardSkeleton />;
@@ -123,6 +133,20 @@ export default function ArtisanWorkshopsPage() {
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    {!w.meetingLink ? (
+                      <button onClick={e => { e.stopPropagation(); handleMeetingLink(w); }} style={{ padding: '6px 10px', borderRadius: 8, color: 'var(--gold-primary)', background: 'rgba(212,168,67,0.1)', display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, fontWeight: 600, border: 'none', cursor: 'pointer' }} title="Add Meeting Link">
+                        <FiLink size={14} /> Add Link
+                      </button>
+                    ) : (
+                      <>
+                        <a href={w.meetingLink} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} style={{ fontSize: 13, color: 'var(--gold-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+                          <FiLink size={13} /> Meeting Link
+                        </a>
+                        <button onClick={e => { e.stopPropagation(); handleMeetingLink(w); }} style={{ padding: '4px 8px', borderRadius: 6, color: 'var(--text-secondary)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 12 }} title="Edit Meeting Link">
+                          <FiEdit2 size={13} />
+                        </button>
+                      </>
+                    )}
                     <button onClick={e => { e.stopPropagation(); handleEdit(w); }} style={{ padding: 8, borderRadius: 8, color: 'var(--text-secondary)' }}><FiEdit2 size={16} /></button>
                     <button onClick={e => { e.stopPropagation(); handleDelete(w.id); }} style={{ padding: 8, borderRadius: 8, color: 'var(--error)' }}><FiTrash2 size={16} /></button>
                     {isExpanded ? <FiChevronUp size={18} /> : <FiChevronDown size={18} />}
@@ -185,6 +209,10 @@ export default function ArtisanWorkshopsPage() {
               <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, display: 'block' }}>Max Participants</label>
               <input type="number" value={form.maxParticipants} onChange={e => setForm({ ...form, maxParticipants: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)', background: 'var(--surface-primary)', color: 'var(--text-primary)', fontSize: 14 }} />
             </div>
+          </div>
+          <div>
+            <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, display: 'block' }}>Meeting Link</label>
+            <input value={form.meetingLink} onChange={e => setForm({ ...form, meetingLink: e.target.value })} placeholder="https://zoom.us/j/... or Google Meet link" style={{ width: '100%', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)', background: 'var(--surface-primary)', color: 'var(--text-primary)', fontSize: 14 }} />
           </div>
           <div>
             <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, display: 'block' }}>Description</label>

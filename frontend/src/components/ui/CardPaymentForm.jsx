@@ -192,7 +192,7 @@ export default function CardPaymentForm({ onSubmit, loading = false, amount = 0 
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit}>
+      <div>
         {/* Cardholder Name */}
         <div className={`input-group input-full ${errors.cardholderName && touched.cardholderName ? 'input-error' : ''}`}>
           <label className="input-label">Cardholder Name</label>
@@ -288,7 +288,8 @@ export default function CardPaymentForm({ onSubmit, loading = false, amount = 0 
         </div>
 
         <button
-          type="submit"
+          type="button"
+          onClick={handleSubmit}
           disabled={loading}
           className="btn btn-primary"
           style={{
@@ -303,7 +304,7 @@ export default function CardPaymentForm({ onSubmit, loading = false, amount = 0 
         >
           {loading ? 'Processing Payment...' : `Pay ${amount ? `$${Number(amount).toFixed(2)}` : ''}`}
         </button>
-      </form>
+      </div>
     </div>
   );
 }

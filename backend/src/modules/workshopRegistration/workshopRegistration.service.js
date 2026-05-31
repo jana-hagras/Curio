@@ -20,6 +20,7 @@ const sanitizeRegistration = (row) => {
     workshopPrice: row.WorkshopPrice || null,
     artisan_id: row.Artisan_id || null,
     artisanName: row.ArtisanFName ? `${row.ArtisanFName} ${row.ArtisanLName}` : null,
+    meetingLink: row.MeetingLink || null,
   };
 };
 
@@ -29,7 +30,7 @@ const REG_QUERY = `
     buyU.FName AS BuyerFName, buyU.LName AS BuyerLName,
     buyU.ProfileImage AS BuyerProfileImage,
     w.Title AS WorkshopTitle, w.WorkshopDate, w.Category AS WorkshopCategory, 
-    w.Price AS WorkshopPrice, w.Artisan_id,
+    w.Price AS WorkshopPrice, w.Artisan_id, w.MeetingLink,
     artU.FName AS ArtisanFName, artU.LName AS ArtisanLName
   FROM WorkshopRegistration wr
   LEFT JOIN Buyer b ON wr.Buyer_id = b.Buyer_id

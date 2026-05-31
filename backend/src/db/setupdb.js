@@ -472,6 +472,7 @@ export const initDatabase = async () => {
         await migrateRequestAI(conn);
         await migrateRequestAIVersioning(conn);
         await migrateRequestImageAndSelection(conn);
+        await migrateWorkshopMeetingLink(conn);
 
     } finally {
         conn.release();
@@ -879,4 +880,22 @@ async function migrateRequestImageAndSelection(conn) {
     }
 
     console.log("Request image source and selection migration complete ✅");
+}
+
+// ─── Workshop table: add MeetingLink column ───
+async function migrateWorkshopMeetingLink(conn) {
+    const [columns] = await conn.query(
+        "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'CURIO' AND TABLE_NAME = 'Workshop'"
+    );
+    const existing = new Set(columns.map(c => c.COLUMN_NAME));
+
+    if (!existing.has('MeetingLink')) {
+        try {
+            await conn.query("ALTER TABLE Workshop ADD COLUMN MeetingLink VARCHAR(500) DEFAULT NULL");
+            console.log("  ✅ Added Workshop.MeetingLink");
+        } catch (e) {
+            if (!e.message.includes('Duplicate column')) console.warn("  ⚠️ Workshop MeetingLink migration warning:", e.message);
+        }
+    }
+    console.log("Workshop MeetingLink migration complete ✅");
 }

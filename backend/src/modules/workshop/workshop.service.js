@@ -14,6 +14,7 @@ const sanitizeWorkshop = (row) => {
     maxParticipants: row.MaxParticipants,
     status: row.Status,
     createdAt: row.CreatedAt,
+    meetingLink: row.MeetingLink || null,
     artisanName: row.ArtisanFName ? `${row.ArtisanFName} ${row.ArtisanLName}` : null,
     artisanBio: row.ArtisanBio || null,
     artisanVerified: row.ArtisanVerified || false,
@@ -123,7 +124,7 @@ export const updateWorkshop = async (req, res, next) => {
     const id = Number(req.query.id);
     if (!id) return res.status(400).json({ ok: false, message: "Query parameter 'id' is required." });
 
-    const { title, description, workshopDate, duration, price, category, maxParticipants, status } = req.body;
+    const { title, description, workshopDate, duration, price, category, maxParticipants, status, meetingLink } = req.body;
 
     const [existing] = await pool.query("SELECT * FROM Workshop WHERE Workshop_id = ?", [id]);
     if (!existing.length) return res.status(404).json({ ok: false, message: "Workshop not found." });
@@ -137,9 +138,10 @@ export const updateWorkshop = async (req, res, next) => {
         Price=COALESCE(?,Price),
         Category=COALESCE(?,Category),
         MaxParticipants=COALESCE(?,MaxParticipants),
-        Status=COALESCE(?,Status)
+        Status=COALESCE(?,Status),
+        MeetingLink=COALESCE(?,MeetingLink)
        WHERE Workshop_id=?`,
-      [title, description, workshopDate, duration, price, category, maxParticipants, status, id]
+      [title, description, workshopDate, duration, price, category, maxParticipants, status, meetingLink, id]
     );
 
     const [rows] = await pool.query(`${WORKSHOP_QUERY} WHERE w.Workshop_id = ?`, [id]);
