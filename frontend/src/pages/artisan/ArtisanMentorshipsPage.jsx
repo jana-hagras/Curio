@@ -14,6 +14,7 @@ import Badge from '../../components/ui/Badge';
 import Modal from '../../components/ui/Modal';
 import DashboardSkeleton from '../../components/ui/DashboardSkeleton';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 export default function ArtisanMentorshipsPage() {
   const { user } = useAuth();
@@ -25,6 +26,9 @@ export default function ArtisanMentorshipsPage() {
   const [expandedId, setExpandedId] = useState(null);
   const [form, setForm] = useState({ category: '', sessionPrice: '', duration: '60', description: '', startDate: '', status: 'Active' });
   const [saving, setSaving] = useState(false);
+  const { t, i18n } = useTranslation(['dashboard', 'common']);
+
+  const isRtl = i18n.language === 'ar';
 
   const loadData = () => {
     Promise.all([
@@ -41,31 +45,31 @@ export default function ArtisanMentorshipsPage() {
   const resetForm = () => setForm({ category: '', sessionPrice: '', duration: '60', description: '', startDate: '', status: 'Active' });
 
   const handleSave = async () => {
-    if (!form.sessionPrice || !form.duration) return toast.error('Price and duration are required');
+    if (!form.sessionPrice || !form.duration) return toast.error(t('dashboard:mentorships.priceDurationReq', 'Price and duration are required'));
     setSaving(true);
     try {
       if (editingId) {
         await mentorshipService.update(editingId, { ...form, sessionPrice: Number(form.sessionPrice), duration: Number(form.duration) });
-        toast.success('Mentorship updated');
+        toast.success(t('dashboard:mentorships.successUpdated', 'Mentorship updated'));
       } else {
         await mentorshipService.create({ ...form, artisan_id: user.id, sessionPrice: Number(form.sessionPrice), duration: Number(form.duration) });
-        toast.success('Mentorship created');
+        toast.success(t('dashboard:mentorships.successCreated', 'Mentorship created'));
       }
       setShowCreateModal(false);
       setEditingId(null);
       resetForm();
       loadData();
-    } catch (err) { toast.error(err.message || 'Failed to save'); }
+    } catch (err) { toast.error(err.message || t('dashboard:mentorships.failedSave', 'Failed to save')); }
     finally { setSaving(false); }
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Delete this mentorship? All applications will be removed.')) return;
+    if (!confirm(t('dashboard:mentorships.deleteConfirm', 'Delete this mentorship? All applications will be removed.'))) return;
     try {
       await mentorshipService.delete(id);
-      toast.success('Mentorship deleted');
+      toast.success(t('dashboard:mentorships.successDeleted', 'Mentorship deleted'));
       loadData();
-    } catch (err) { toast.error(err.message || 'Failed to delete'); }
+    } catch (err) { toast.error(err.message || t('dashboard:mentorships.failedDelete', 'Failed to delete')); }
   };
 
   const handleEdit = (m) => {
@@ -81,9 +85,9 @@ export default function ArtisanMentorshipsPage() {
   const handleApplicationAction = async (appId, status, meetingLink, scheduledAt) => {
     try {
       await mentorshipApplicationService.update(appId, { status, meetingLink, scheduledAt });
-      toast.success(`Application ${status.toLowerCase()}`);
+      toast.success(t('dashboard:mentorships.appActionSuccess', 'Application updated successfully'));
       loadData();
-    } catch (err) { toast.error(err.message || 'Failed to update'); }
+    } catch (err) { toast.error(err.message || t('dashboard:mentorships.failedUpdateApp', 'Failed to update')); }
   };
 
   if (loading) return <DashboardSkeleton />;
@@ -95,21 +99,21 @@ export default function ArtisanMentorshipsPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
         <div>
-          <h1 style={{ fontSize: 28, marginBottom: 4 }}>My Mentorships</h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: 15 }}>Create and manage your mentorship offerings</p>
+          <h1 style={{ fontSize: 28, marginBottom: 4 }}>{t('dashboard:mentorships.title', 'My Mentorships')}</h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 15 }}>{t('dashboard:mentorships.subtitle', 'Create and manage your mentorship offerings')}</p>
         </div>
         <Button icon={FiPlus} onClick={() => { resetForm(); setEditingId(null); setShowCreateModal(true); }}>
-          New Mentorship
+          {t('dashboard:mentorships.newMentorship', 'New Mentorship')}
         </Button>
       </div>
 
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 32 }}>
         {[
-          { label: 'Total Offerings', value: mentorships.length, icon: FiBookOpen, color: '#D4A843' },
-          { label: 'Active', value: mentorships.filter(m => m.status === 'Active').length, icon: FiCheckCircle, color: '#10B981' },
-          { label: 'Total Applications', value: applications.length, icon: FiUsers, color: '#3B82F6' },
-          { label: 'Accepted Students', value: applications.filter(a => a.status === 'Accepted').length, icon: FiCheckCircle, color: '#8B5CF6' },
+          { label: t('dashboard:mentorships.totalOfferings', 'Total Offerings'), value: mentorships.length, icon: FiBookOpen, color: '#D4A843' },
+          { label: t('dashboard:mentorships.active', 'Active'), value: mentorships.filter(m => m.status === 'Active').length, icon: FiCheckCircle, color: '#10B981' },
+          { label: t('dashboard:mentorships.totalApplications', 'Total Applications'), value: applications.length, icon: FiUsers, color: '#3B82F6' },
+          { label: t('dashboard:mentorships.acceptedStudents', 'Accepted Students'), value: applications.filter(a => a.status === 'Accepted').length, icon: FiCheckCircle, color: '#8B5CF6' },
         ].map((s, i) => (
           <div key={i} style={{
             background: 'var(--surface-primary)', padding: 20, borderRadius: 'var(--radius-lg)',
@@ -135,9 +139,9 @@ export default function ArtisanMentorshipsPage() {
           <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(212,168,67,0.1)', color: 'var(--gold-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: 24 }}>
             <FiBookOpen />
           </div>
-          <h3 style={{ fontSize: 18, fontFamily: 'var(--font-body)', marginBottom: 8 }}>No Mentorships Yet</h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 20 }}>Create your first mentorship offering to start teaching</p>
-          <Button icon={FiPlus} onClick={() => setShowCreateModal(true)}>Create Mentorship</Button>
+          <h3 style={{ fontSize: 18, fontFamily: 'var(--font-body)', marginBottom: 8 }}>{t('dashboard:mentorships.noMentorshipsYet', 'No Mentorships Yet')}</h3>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 20 }}>{t('dashboard:mentorships.noMentorshipsDesc', 'Create your first mentorship offering to start teaching')}</p>
+          <Button icon={FiPlus} onClick={() => setShowCreateModal(true)}>{t('dashboard:mentorships.createMentorship', 'Create Mentorship')}</Button>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -161,19 +165,19 @@ export default function ArtisanMentorshipsPage() {
                     </div>
                     <div style={{ minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                        <p style={{ fontWeight: 600, fontSize: 15 }}>{m.category || 'General Mentorship'}</p>
+                        <p style={{ fontWeight: 600, fontSize: 15 }}>{m.category ? t('common:categories.' + m.category, m.category) : t('dashboard:mentorships.generalMentorship', 'General Mentorship')}</p>
                         <Badge status={m.status}>{m.status}</Badge>
                       </div>
                       <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-                        {formatCurrency(m.sessionPrice)}/session · {m.duration}min · {apps.length} application{apps.length !== 1 ? 's' : ''}
+                        {t('dashboard:mentorships.sessionPrice', { price: formatCurrency(m.sessionPrice) })} · {t('dashboard:mentorships.durationMin', { duration: m.duration })} · {t('dashboard:mentorships.applicationCountPlural', { count: apps.length })}
                       </p>
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <button onClick={e => { e.stopPropagation(); handleEdit(m); }} style={{ padding: 8, borderRadius: 8, color: 'var(--text-secondary)' }} title="Edit">
+                    <button onClick={e => { e.stopPropagation(); handleEdit(m); }} style={{ padding: 8, borderRadius: 8, color: 'var(--text-secondary)', background: 'none', border: 'none', cursor: 'pointer' }} title={t('common:edit', 'Edit')}>
                       <FiEdit2 size={16} />
                     </button>
-                    <button onClick={e => { e.stopPropagation(); handleDelete(m.id); }} style={{ padding: 8, borderRadius: 8, color: 'var(--error)' }} title="Delete">
+                    <button onClick={e => { e.stopPropagation(); handleDelete(m.id); }} style={{ padding: 8, borderRadius: 8, color: 'var(--error)', background: 'none', border: 'none', cursor: 'pointer' }} title={t('common:delete', 'Delete')}>
                       <FiTrash2 size={16} />
                     </button>
                     {isExpanded ? <FiChevronUp size={18} /> : <FiChevronDown size={18} />}
@@ -184,7 +188,7 @@ export default function ArtisanMentorshipsPage() {
                 {isExpanded && (
                   <div style={{ borderTop: '1px solid var(--surface-border)' }}>
                     {apps.length === 0 ? (
-                      <p style={{ padding: '24px', color: 'var(--text-secondary)', textAlign: 'center', fontSize: 14 }}>No applications yet</p>
+                      <p style={{ padding: '24px', color: 'var(--text-secondary)', textAlign: 'center', fontSize: 14 }}>{t('dashboard:mentorships.noApplications', 'No applications yet')}</p>
                     ) : (
                       apps.map(app => (
                         <div key={app.id} style={{
@@ -201,7 +205,7 @@ export default function ArtisanMentorshipsPage() {
                             <div>
                               <p style={{ fontWeight: 600, fontSize: 14 }}>{app.buyerName || 'Buyer'}</p>
                               <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-                                Applied {app.applicationDate ? formatDate(app.applicationDate) : 'recently'}
+                                {t('dashboard:mentorships.appliedDate', { date: app.applicationDate ? formatDate(app.applicationDate) : t('dashboard:mentorships.appliedRecently', 'recently') })}
                                 {app.message && ` · "${app.message.slice(0, 50)}${app.message.length > 50 ? '...' : ''}"`}
                               </p>
                             </div>
@@ -211,24 +215,24 @@ export default function ArtisanMentorshipsPage() {
                             {app.status === 'Pending' && (
                               <>
                                 <Button size="sm" onClick={() => handleApplicationAction(app.id, 'Accepted')}>
-                                  <FiCheckCircle size={14} style={{ marginRight: 4 }} /> Accept
+                                  <FiCheckCircle size={14} style={{ [isRtl ? 'marginLeft' : 'marginRight']: 4 }} /> {t('dashboard:proposals.accept', 'Accept')}
                                 </Button>
                                 <Button size="sm" variant="ghost" onClick={() => handleApplicationAction(app.id, 'Rejected')}>
-                                  <FiXCircle size={14} style={{ marginRight: 4 }} /> Reject
+                                  <FiXCircle size={14} style={{ [isRtl ? 'marginLeft' : 'marginRight']: 4 }} /> {t('dashboard:proposals.reject', 'Reject')}
                                 </Button>
                               </>
                             )}
                             {app.status === 'Accepted' && !app.meetingLink && (
                               <Button size="sm" variant="outline" onClick={() => {
-                                const link = prompt('Enter meeting link (Zoom, Google Meet, etc.):');
+                                const link = prompt(t('dashboard:mentorships.enterMeetingLinkPrompt', 'Enter meeting link (Zoom, Google Meet, etc.):'));
                                 if (link) handleApplicationAction(app.id, 'Accepted', link);
                               }}>
-                                <FiLink size={14} style={{ marginRight: 4 }} /> Add Meeting Link
+                                <FiLink size={14} style={{ [isRtl ? 'marginLeft' : 'marginRight']: 4 }} /> {t('dashboard:mentorships.addMeetingLink', 'Add Meeting Link')}
                               </Button>
                             )}
                             {app.meetingLink && (
                               <a href={app.meetingLink} target="_blank" rel="noreferrer" style={{ fontSize: 13, color: 'var(--gold-primary)', fontWeight: 600 }}>
-                                <FiLink size={13} /> Meeting Link
+                                <FiLink size={13} /> {t('dashboard:mentorships.meetingLink', 'Meeting Link')}
                               </a>
                             )}
                           </div>
@@ -244,46 +248,46 @@ export default function ArtisanMentorshipsPage() {
       )}
 
       {/* Create/Edit Modal */}
-      <Modal isOpen={showCreateModal} onClose={() => { setShowCreateModal(false); setEditingId(null); resetForm(); }} title={editingId ? 'Edit Mentorship' : 'Create Mentorship'} size="lg">
+      <Modal isOpen={showCreateModal} onClose={() => { setShowCreateModal(false); setEditingId(null); resetForm(); }} title={editingId ? t('dashboard:mentorships.editMentorship', 'Edit Mentorship') : t('dashboard:mentorships.createMentorship', 'Create Mentorship')} size="lg">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: '8px 0' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             <div>
-              <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, display: 'block' }}>Category *</label>
+              <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, display: 'block' }}>{t('dashboard:mentorships.category', 'Category *')}</label>
               <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)', background: 'var(--surface-primary)', color: 'var(--text-primary)', fontSize: 14 }}>
-                <option value="">Select category</option>
-                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                <option value="">{t('dashboard:mentorships.selectCategory', 'Select category')}</option>
+                {CATEGORIES.map(c => <option key={c} value={c}>{t('common:categories.' + c, c)}</option>)}
               </select>
             </div>
             <div>
-              <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, display: 'block' }}>Session Price ($) *</label>
+              <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, display: 'block' }}>{t('dashboard:mentorships.sessionPriceLabel', 'Session Price ($) *')}</label>
               <input type="number" value={form.sessionPrice} onChange={e => setForm({ ...form, sessionPrice: e.target.value })} placeholder="e.g. 50" style={{ width: '100%', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)', background: 'var(--surface-primary)', color: 'var(--text-primary)', fontSize: 14 }} />
             </div>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             <div>
-              <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, display: 'block' }}>Duration (min) *</label>
+              <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, display: 'block' }}>{t('dashboard:mentorships.durationLabel', 'Duration (min) *')}</label>
               <input type="number" value={form.duration} onChange={e => setForm({ ...form, duration: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)', background: 'var(--surface-primary)', color: 'var(--text-primary)', fontSize: 14 }} />
             </div>
             <div>
-              <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, display: 'block' }}>Status</label>
+              <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, display: 'block' }}>{t('dashboard:mentorships.statusLabel', 'Status')}</label>
               <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)', background: 'var(--surface-primary)', color: 'var(--text-primary)', fontSize: 14 }}>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-                <option value="Full">Full</option>
+                <option value="Active">{t('dashboard:mentorships.statusActive', 'Active')}</option>
+                <option value="Inactive">{t('dashboard:mentorships.statusInactive', 'Inactive')}</option>
+                <option value="Full">{t('dashboard:mentorships.statusFull', 'Full')}</option>
               </select>
             </div>
           </div>
           <div>
-            <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, display: 'block' }}>Start Date</label>
+            <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, display: 'block' }}>{t('dashboard:mentorships.startDateLabel', 'Start Date')}</label>
             <input type="date" value={form.startDate} onChange={e => setForm({ ...form, startDate: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)', background: 'var(--surface-primary)', color: 'var(--text-primary)', fontSize: 14 }} />
           </div>
           <div>
-            <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, display: 'block' }}>Description</label>
-            <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={4} placeholder="Describe what students will learn, your experience, and teaching approach..." style={{ width: '100%', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)', background: 'var(--surface-primary)', color: 'var(--text-primary)', fontSize: 14, resize: 'vertical', fontFamily: 'var(--font-body)' }} />
+            <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, display: 'block' }}>{t('dashboard:mentorships.descriptionLabel', 'Description')}</label>
+            <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={4} placeholder={t('dashboard:mentorships.descPlaceholder', 'Describe what students will learn...')} style={{ width: '100%', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)', background: 'var(--surface-primary)', color: 'var(--text-primary)', fontSize: 14, resize: 'vertical', fontFamily: 'var(--font-body)' }} />
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 8 }}>
-            <Button variant="ghost" onClick={() => { setShowCreateModal(false); setEditingId(null); resetForm(); }}>Cancel</Button>
-            <Button onClick={handleSave} loading={saving}>{editingId ? 'Update' : 'Create'} Mentorship</Button>
+            <Button variant="ghost" onClick={() => { setShowCreateModal(false); setEditingId(null); resetForm(); }}>{t('dashboard:mentorships.cancel', 'Cancel')}</Button>
+            <Button onClick={handleSave} loading={saving}>{editingId ? t('dashboard:mentorships.update', 'Update') : t('dashboard:mentorships.create', 'Create')}</Button>
           </div>
         </div>
       </Modal>

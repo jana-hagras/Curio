@@ -5,7 +5,7 @@ import pool from "../../db/connection.js";
 //  Supports versioned refinement for iterative design workflow
 // ══════════════════════════════════════════════════════════════
 
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
 const MESHY_API_URL = "https://api.meshy.ai/openapi/v1/text-to-image";
 
 const GEMINI_SYSTEM_PROMPT = `You are an expert product designer and 3D visualization specialist for handmade Egyptian artisan crafts.

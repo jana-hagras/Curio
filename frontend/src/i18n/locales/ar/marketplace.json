@@ -1,0 +1,36 @@
+{
+  "title": "المتجر",
+  "subtitle": "اكتشف تحفاً فريدة مصنوعة يدوياً بأيدي نخبة من حرفيي مصر",
+  "search": "البحث عن المنتجات...",
+  "allCategories": "جميع الفئات",
+  "sortBy": "ترتيب حسب",
+  "sortOptions": {
+    "newest": "الأحدث",
+    "priceLow": "السعر: من الأقل للأعلى",
+    "priceHigh": "السعر: من الأعلى للأقل",
+    "rating": "الأعلى تقييماً"
+  },
+  "filters": "تصفية المنتجات",
+  "priceRange": "نطاق السعر",
+  "clearFilters": "مسح الفلاتر",
+  "showing": "عرض {{count}} من المنتجات",
+  "noProducts": "لم يتم العثور على منتجات",
+  "noProductsDesc": "حاول تعديل خيارات التصفية أو البحث الخاصة بك",
+  "allCreations": "كل التصاميم",
+  "addToCart": "أضف إلى السلة",
+  "masterArtisan": "حرفي خبير",
+  "spec": {
+    "artisan": "الصانع",
+    "origin": "المصدر",
+    "category": "الفئة",
+    "price": "السعر"
+  },
+  "regions": {
+    "ALL": "الكل",
+    "CAIRO": "القاهرة",
+    "ALEXANDRIA": "الإسكندرية",
+    "LUXOR": "الأقصر",
+    "ASWAN": "أسوان",
+    "FAYOUM": "الفيوم"
+  }
+}

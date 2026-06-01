@@ -107,3 +107,6 @@ coverage/
 # =========================
 *.sqlite
 *.db
+
+# Impeccable Design Cache
+.impeccable/

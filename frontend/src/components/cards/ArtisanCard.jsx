@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import './ArtisanCard.css';
 
 export default function ArtisanCard({ artisan }) {
+  const { t } = useTranslation(['common']);
   return (
     <Link to={`/artisans/${artisan.id}`} className="artisan-card" id={`artisan-card-${artisan.id}`}>
       <div className="artisan-card-avatar-wrapper">
@@ -12,11 +14,12 @@ export default function ArtisanCard({ artisan }) {
             <span>{artisan.firstName?.charAt(0)}{artisan.lastName?.charAt(0)}</span>
           )}
         </div>
-        <div className="artisan-card-status-indicator" title="Active"></div>
+        <div className="artisan-card-status-indicator" title={t('common:nav.adminPanel') === 'Admin Panel' ? 'Active' : 'نشط'}></div>
       </div>
       <h3 className="artisan-card-name">{artisan.firstName} {artisan.lastName}</h3>
-      <p className="artisan-card-bio">{artisan.bio?.slice(0, 100) || 'Egyptian Artisan'}{artisan.bio?.length > 100 ? '...' : ''}</p>
-      <span className="artisan-card-view">View Profile →</span>
+      <p className="artisan-card-bio">{artisan.bio?.slice(0, 100) || (t('common:nav.adminPanel') === 'Admin Panel' ? 'Egyptian Artisan' : 'حرفي مصري')}{artisan.bio?.length > 100 ? '...' : ''}</p>
+      <span className="artisan-card-view">{t('common:nav.adminPanel') === 'Admin Panel' ? 'View Profile →' : 'عرض الملف الشخصي ←'}</span>
     </Link>
   );
 }
+
