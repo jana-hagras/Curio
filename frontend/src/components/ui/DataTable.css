@@ -2,12 +2,14 @@
   background: var(--surface-primary);
   border-radius: var(--radius-lg);
   border: 1px solid var(--surface-border);
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 640px;
 }
 
 .data-table th {
@@ -35,4 +37,12 @@
 
 .data-table tr:hover td {
   background: var(--surface-secondary);
+}
+
+@media (max-width: 768px) {
+  .data-table th,
+  .data-table td {
+    padding: 12px 14px;
+    font-size: 13px;
+  }
 }

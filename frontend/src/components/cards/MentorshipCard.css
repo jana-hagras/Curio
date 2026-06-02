@@ -6,6 +6,7 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   position: relative;
+  min-width: 0;
 }
 
 .mentorship-card:hover {
@@ -18,6 +19,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  min-width: 0;
 }
 
 .mentorship-card-avatar {
@@ -98,6 +100,8 @@
   font-size: 12px;
   font-weight: 600;
   margin-bottom: 12px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .mentorship-card-desc {
@@ -109,6 +113,7 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   min-height: 42px;
+  overflow-wrap: anywhere;
 }
 
 .mentorship-card-footer {
@@ -117,12 +122,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 14px;
 }
 
 .mentorship-card-meta {
   display: flex;
   align-items: center;
   gap: 16px;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .mentorship-card-meta-item {
@@ -143,6 +151,8 @@
   font-weight: 700;
   color: var(--gold-primary);
   font-family: var(--font-body);
+  flex-shrink: 0;
+  text-align: right;
 }
 
 .mentorship-card-price span {
@@ -155,4 +165,36 @@
   position: absolute;
   top: 16px;
   right: 16px;
+}
+
+@media (max-width: 420px) {
+  .mentorship-card-header {
+    padding: 18px 16px 12px;
+    align-items: flex-start;
+  }
+
+  .mentorship-card-avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 18px;
+  }
+
+  .mentorship-card-body {
+    padding: 0 16px 14px;
+  }
+
+  .mentorship-card-footer {
+    padding: 14px 16px 16px;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .mentorship-card-meta {
+    gap: 10px 14px;
+  }
+
+  .mentorship-card-price {
+    width: 100%;
+    text-align: left;
+  }
 }

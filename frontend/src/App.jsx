@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
@@ -144,6 +145,16 @@ function AppToaster() {
   );
 }
 
+function ScrollToTop() {
+  const { pathname, search } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [pathname, search]);
+
+  return null;
+}
+
 export default function App() {
   return (
     <ThemeProvider>
@@ -152,6 +163,7 @@ export default function App() {
           <FavoritesProvider>
             <ChatProvider>
             <Router>
+            <ScrollToTop />
             <AppToaster />
             <Routes>
               <Route element={<Layout />}>
@@ -206,4 +218,3 @@ export default function App() {
     </ThemeProvider>
   );
 }
-

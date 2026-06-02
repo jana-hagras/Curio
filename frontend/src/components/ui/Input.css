@@ -23,6 +23,11 @@
 .input-icon {
   position: absolute;
   left: 14px;
+  top: 0;
+  bottom: 0;
+  margin-top: auto;
+  margin-bottom: auto;
+  height: 18px;
   font-size: 18px;
   color: var(--text-tertiary);
   pointer-events: none;
@@ -61,6 +66,11 @@
 .input-password-toggle {
   position: absolute;
   right: 12px;
+  top: 0;
+  bottom: 0;
+  margin-top: auto;
+  margin-bottom: auto;
+  height: 26px;
   background: none;
   border: none;
   color: var(--text-tertiary);
@@ -68,7 +78,9 @@
   cursor: pointer;
   padding: 4px;
   display: flex;
-  transition: color 0.15s;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, transform 0.15s;
 }
 
 .input-password-toggle:hover {

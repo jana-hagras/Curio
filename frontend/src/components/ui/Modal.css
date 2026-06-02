@@ -29,8 +29,8 @@
   box-shadow: var(--shadow-xl);
   border: 1px solid var(--surface-border);
   max-width: 500px;
-  width: 90%;
-  max-height: 85vh;
+  width: calc(100% - 24px);
+  max-height: 90dvh;
   overflow-y: auto;
   animation: scaleIn 200ms ease;
 }
@@ -68,4 +68,33 @@
 .modal-body p {
   margin-bottom: 1rem;
   color: inherit;
+}
+
+@media (max-width: 768px) {
+  .modal-sm,
+  .modal-md,
+  .modal-lg {
+    max-width: none;
+  }
+
+  .modal {
+    border-radius: var(--radius-md);
+    width: calc(100% - 16px);
+  }
+
+  .modal-header {
+    padding: 14px 16px;
+  }
+
+  .modal-body {
+    padding: 16px;
+  }
+
+  .modal-close {
+    min-width: 36px;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }

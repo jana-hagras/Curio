@@ -3,13 +3,13 @@
    ═══════════════════════════════════════════ */
 
 .luxury-homepage {
-  --bg-primary: #FCFAF7;
-  --bg-secondary: #FFFFFF;
-  --bg-tertiary: #F2EDE4;
+  --bg-primary: #fcfaf7;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f2ede4;
   --border-color: rgba(0, 0, 0, 0.08);
   --text-main: #141416;
-  --text-muted: #6B6B76;
-  --text-faint: #9CA3AF;
+  --text-muted: #6b6b76;
+  --text-faint: #9ca3af;
 
   background-color: var(--bg-primary);
   color: var(--text-main);
@@ -20,10 +20,10 @@
 [data-theme="dark"] .luxury-homepage {
   --bg-primary: #080808;
   --bg-secondary: #121212;
-  --bg-tertiary: #16161E;
+  --bg-tertiary: #16161e;
   --border-color: rgba(255, 255, 255, 0.03);
-  --text-main: #F5F5F5;
-  --text-muted: #A0A0A0;
+  --text-main: #f5f5f5;
+  --text-muted: #a0a0a0;
   --text-faint: #606060;
 }
 
@@ -32,7 +32,7 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 clamp(16px, 4vw, 40px);
 }
 
 /* ─── 1. HERO SECTION (Lando Norris Cinematic Video Backdrop) ─── */
@@ -41,12 +41,13 @@
   --bg-primary: #080808;
   --bg-secondary: #121212;
   --border-color: rgba(255, 255, 255, 0.15);
-  --text-main: #F5F5F5;
-  --text-muted: #A0A0A0;
+  --text-main: #f5f5f5;
+  --text-muted: #a0a0a0;
   --text-faint: #606060;
 
   position: relative;
-  height: 100vh;
+  min-height: 100vh;
+  min-height: 100dvh;
   width: 100%;
   display: flex;
   align-items: center;
@@ -69,10 +70,12 @@
 .hero-glass-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg,
-      rgba(8, 8, 8, 0.3) 0%,
-      rgba(8, 8, 8, 0.7) 70%,
-      var(--bg-primary) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(8, 8, 8, 0.3) 0%,
+    rgba(8, 8, 8, 0.7) 70%,
+    var(--bg-primary) 100%
+  );
   z-index: 1;
   pointer-events: none;
 }
@@ -84,7 +87,9 @@
   border: 1px solid rgba(212, 175, 55, 0.15);
   pointer-events: none;
   z-index: 2;
-  box-shadow: inset 0 0 30px rgba(212, 175, 55, 0.05), 0 0 20px rgba(212, 175, 55, 0.02);
+  box-shadow:
+    inset 0 0 30px rgba(212, 175, 55, 0.05),
+    0 0 20px rgba(212, 175, 55, 0.02);
 }
 
 /* Oryzo-style ruler ticks layout */
@@ -143,7 +148,7 @@
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 2.5px;
-  color: #D4AF37;
+  color: #d4af37;
   white-space: nowrap;
 }
 
@@ -151,8 +156,8 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background-color: #D4AF37;
-  box-shadow: 0 0 8px #D4AF37;
+  background-color: #d4af37;
+  box-shadow: 0 0 8px #d4af37;
   animation: pulseGlow 2s infinite ease-in-out;
 }
 
@@ -194,14 +199,49 @@
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding-left: 100px;
+  padding-left: clamp(16px, 7vw, 100px);
+  padding-right: clamp(16px, 4vw, 40px);
   position: relative;
   z-index: 3;
 }
 
 .hero-content-wrapper {
   max-width: 800px;
+  width: 100%;
   text-align: left;
+}
+
+.hero-huge-bg-text {
+  position: absolute;
+  left: 5%;
+  bottom: 15%;
+  font-family: var(--font-heading);
+  font-size: 14vw;
+  font-weight: 900;
+  line-height: 0.8;
+  color: rgba(255, 255, 255, 0.015);
+  pointer-events: none;
+  text-transform: uppercase;
+  z-index: 1;
+  letter-spacing: -5px;
+}
+
+.hero-meta-badge {
+  display: inline-flex;
+  align-items: center;
+  max-width: min(100%, 520px);
+  gap: 10px;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  padding: 6px 14px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #d4af37;
+  text-transform: uppercase;
 }
 
 /* Oryzo-style telemetry stats badge */
@@ -219,16 +259,16 @@
 .badge-dot {
   width: 6px;
   height: 6px;
-  background-color: #D4AF37;
+  background-color: #d4af37;
   border-radius: 50%;
-  box-shadow: 0 0 10px #D4AF37;
+  box-shadow: 0 0 10px #d4af37;
 }
 
 .badge-text {
   font-family: var(--font-mono, monospace);
   font-size: 9px;
   font-weight: 700;
-  color: #D4AF37;
+  color: #d4af37;
   letter-spacing: 2px;
   text-transform: uppercase;
 }
@@ -239,14 +279,14 @@
   font-size: 76px;
   font-weight: 400;
   line-height: 1.05;
-  color: #D4AF37;
+  color: #d4af37;
   margin: 0 0 24px;
   letter-spacing: -2px;
 }
 
 .hero-luxury-title span {
   display: block;
-  background: linear-gradient(135deg, #FFF 0%, #D4AF37 50%, #FFF 100%);
+  background: linear-gradient(135deg, #fff 0%, #d4af37 50%, #fff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -264,6 +304,7 @@
 .hero-luxury-actions {
   display: flex;
   gap: 20px;
+  flex-wrap: wrap;
 }
 
 /* Tech-fluid brushed gold buttons (Oryzo Style) */
@@ -272,22 +313,23 @@
   align-items: center;
   justify-content: center;
   padding: 14px 32px;
-  background: #D4AF37;
+  background: #d4af37;
   color: #080808;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
   border-radius: 4px;
-  border: 1px solid #D4AF37;
+  border: 1px solid #d4af37;
   transition: all var(--transition-slow) cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 4px 20px rgba(212, 175, 55, 0.15);
   text-decoration: none;
+  min-height: 46px;
 }
 
 .luxury-btn-primary:hover {
   background: var(--bg-primary);
-  color: #D4AF37;
+  color: #d4af37;
   transform: translateY(-4px);
   box-shadow: 0 12px 30px rgba(212, 175, 55, 0.3);
 }
@@ -307,11 +349,12 @@
   border: 1px solid var(--border-color);
   transition: all var(--transition-slow) cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none;
+  min-height: 46px;
 }
 
 .luxury-btn-secondary:hover {
-  border-color: #D4AF37;
-  color: #D4AF37;
+  border-color: #d4af37;
+  color: #d4af37;
   transform: translateY(-4px);
   background: rgba(212, 175, 55, 0.03);
 }
@@ -336,7 +379,7 @@
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 2px;
-  color: #D4AF37;
+  color: #d4af37;
 }
 
 .hud-divider {
@@ -366,7 +409,7 @@
 .scroll-gold-line {
   width: 1px;
   height: 60px;
-  background: linear-gradient(180deg, #D4AF37, transparent);
+  background: linear-gradient(180deg, #d4af37, transparent);
   animation: scrollLineAnimation 2s infinite ease-in-out;
 }
 
@@ -392,7 +435,6 @@
   }
 }
 
-
 /* ─── GENERAL EDITORIAL TYPOGRAPHY ─── */
 .editorial-header {
   margin-bottom: 80px;
@@ -407,7 +449,7 @@
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 3px;
-  color: #D4AF37;
+  color: #d4af37;
   margin-bottom: 12px;
 }
 
@@ -431,7 +473,6 @@
 .editorial-header.text-center .editorial-section-subtitle {
   margin: 0 auto;
 }
-
 
 /* ─── 2. VENDOR HIGHLIGHT (Asymmetric Staggered Columns) ─── */
 .vendor-highlight-section {
@@ -468,7 +509,11 @@
   position: absolute;
   inset: 0;
   border-radius: 4px;
-  background: radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.08), transparent 70%);
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(212, 175, 55, 0.08),
+    transparent 70%
+  );
   opacity: 0;
   transition: opacity 0.6s ease;
   pointer-events: none;
@@ -511,7 +556,7 @@
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  color: #D4AF37;
+  color: #d4af37;
   background-color: rgba(212, 175, 55, 0.05);
 }
 
@@ -528,7 +573,7 @@
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 1px;
-  color: #D4AF37;
+  color: #d4af37;
   text-transform: uppercase;
   margin-bottom: 20px;
 }
@@ -544,7 +589,7 @@
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 1px;
-  color: #D4AF37;
+  color: #d4af37;
   text-transform: uppercase;
   display: inline-flex;
   align-items: center;
@@ -569,7 +614,6 @@
   border-radius: 4px;
 }
 
-
 /* ─── 3. LIFESTYLE CURATION BANNER (Storyteller Quote) ─── */
 .lifestyle-curation-banner {
   position: relative;
@@ -582,10 +626,11 @@
 
 /* Subtle data-overlay grids in background (Oryzo tech vibe) */
 .lifestyle-curation-banner::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(rgba(212, 175, 55, 0.01) 1px, transparent 1px),
+  background-image:
+    linear-gradient(rgba(212, 175, 55, 0.01) 1px, transparent 1px),
     linear-gradient(90deg, rgba(212, 175, 55, 0.01) 1px, transparent 1px);
   background-size: 80px 80px;
   pointer-events: none;
@@ -599,12 +644,23 @@
   padding: 0 40px;
 }
 
+.banner-image-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at center,
+    rgba(212, 175, 55, 0.04),
+    transparent 65%
+  );
+}
+
 .lifestyle-quote {
   font-family: var(--font-heading);
   font-size: 34px;
   font-weight: 300;
   font-style: italic;
-  color: #D4AF37;
+  color: #d4af37;
   line-height: 1.5;
   margin: 0 0 24px;
   letter-spacing: -0.5px;
@@ -617,7 +673,6 @@
   color: var(--text-muted);
   text-transform: uppercase;
 }
-
 
 /* ─── 4. THE ANTI-GRAVITY SHOWCASE SECTION ─── */
 .anti-gravity-showcase-section {
@@ -637,10 +692,8 @@
   transform: translateY(0);
 }
 
-
 /* ─── RESPONSIVE STYLING ─── */
 @media (max-width: 1024px) {
-
   .hero-neon-frame-glow,
   .hero-ruler,
   .hero-vertical-capsule,
@@ -671,12 +724,21 @@
 }
 
 @media (max-width: 768px) {
+  .luxury-container {
+    padding: 0 16px;
+  }
+
   .hero-luxury-title {
-    font-size: 48px;
+    font-size: clamp(38px, 11vw, 48px);
+    line-height: 1.04;
+    letter-spacing: -1px;
+    margin-bottom: 16px;
   }
 
   .hero-luxury-subtitle {
     font-size: 15px;
+    margin-bottom: 24px;
+    max-width: 100%;
   }
 
   .luxury-hero {
@@ -684,12 +746,126 @@
   }
 
   .hero-main-container {
-    padding-left: 40px;
-    padding-right: 40px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .hero-luxury-actions {
+    gap: 12px;
+  }
+
+  .luxury-btn-primary,
+  .luxury-btn-secondary {
+    padding: 12px 18px;
+    letter-spacing: 1.5px;
+    font-size: 10px;
   }
 
   .lifestyle-quote {
     font-size: 24px;
+  }
+
+  .editorial-header {
+    margin-bottom: 40px;
+  }
+
+  .editorial-section-title {
+    font-size: 34px;
+  }
+
+  .vendor-highlight-section,
+  .anti-gravity-showcase-section {
+    padding: 84px 0;
+  }
+
+  .lifestyle-curation-banner {
+    padding: 96px 0;
+  }
+
+  .vendor-editorial-card {
+    padding: 32px 22px;
+  }
+
+  .vendor-shimmer-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .anti-gravity-staggered-gallery {
+    margin-top: 40px;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .luxury-hero {
+    padding-top: 18px;
+  }
+
+  .hero-main-container {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .hero-huge-bg-text,
+  .hero-scroll-indicator {
+    display: none;
+  }
+
+  .hero-meta-badge {
+    letter-spacing: 1.2px;
+    font-size: 8px;
+    padding: 6px 10px;
+    margin-bottom: 14px;
+  }
+
+  .hero-luxury-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .luxury-btn-primary,
+  .luxury-btn-secondary {
+    width: 100%;
+    min-height: 48px;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .banner-content {
+    padding: 0 16px;
+  }
+
+  .lifestyle-quote {
+    font-size: 20px;
+  }
+
+  .editorial-section-title {
+    font-size: 30px;
+  }
+}
+
+@media (max-width: 420px) {
+  .hero-luxury-title {
+    font-size: clamp(30px, 14vw, 42px);
+  }
+
+  .hero-luxury-subtitle {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .section-meta-label {
+    letter-spacing: 2px;
+  }
+
+  .editorial-section-subtitle {
+    font-size: 14px;
+  }
+
+  .vendor-card-name {
+    font-size: 20px;
   }
 }
 
@@ -711,7 +887,14 @@
 
 @media (max-width: 768px) {
   [dir="rtl"] .hero-main-container {
-    padding-left: 40px;
-    padding-right: 40px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  [dir="rtl"] .hero-main-container {
+    padding-left: 14px;
+    padding-right: 14px;
   }
 }

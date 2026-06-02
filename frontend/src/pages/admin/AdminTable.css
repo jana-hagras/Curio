@@ -4,6 +4,8 @@
 
 .admin-table-page {
   animation: fadeInUp 0.4s ease forwards;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .admin-table-header {
@@ -13,10 +15,11 @@
   margin-bottom: 24px;
   flex-wrap: wrap;
   gap: 16px;
+  min-width: 0;
 }
 
 .admin-table-header h1 {
-  font-size: 26px;
+  font-size: clamp(22px, 4vw, 26px);
   background: var(--gold-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -28,17 +31,20 @@
   color: var(--text-secondary);
   font-weight: 500;
   margin-top: 2px;
+  overflow-wrap: anywhere;
 }
 
 /* Search Bar */
 .admin-search-bar {
   position: relative;
-  width: 320px;
+  width: min(320px, 100%);
+  flex-shrink: 0;
 }
 
 .admin-search-bar input {
   width: 100%;
   padding: 10px 14px 10px 40px;
+  min-height: 44px;
   border-radius: var(--radius-md);
   border: 1px solid var(--surface-border);
   background: var(--surface-primary);
@@ -74,11 +80,13 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--surface-border);
   overflow: hidden;
+  max-width: 100%;
 }
 
 .admin-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: auto;
 }
 
 .admin-table thead {
@@ -105,6 +113,7 @@
   border-bottom: 1px solid var(--surface-border);
   vertical-align: middle;
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .admin-table tbody tr {
@@ -247,11 +256,12 @@
 .admin-actions {
   display: flex;
   gap: 4px;
+  flex-wrap: wrap;
 }
 
 .admin-action-btn {
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
@@ -273,6 +283,17 @@
 .admin-action-btn.danger:hover {
   background: rgba(239, 68, 68, 0.1);
   color: #EF4444;
+}
+
+.admin-expand-btn {
+  min-width: 34px;
+  min-height: 34px;
+  border-radius: var(--radius-sm);
+}
+
+.admin-ai-thumb-stack {
+  min-width: 0;
+  flex-wrap: wrap;
 }
 
 /* Empty State */
@@ -320,7 +341,7 @@
 /* Stats Row */
 .admin-mini-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -346,15 +367,133 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .admin-table-header {
+    align-items: stretch;
+  }
+
+  .admin-table-header > div:first-child {
+    min-width: 0;
+  }
+
   .admin-search-bar {
     width: 100%;
   }
 
   .admin-table-wrapper {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--radius-md);
   }
 
   .admin-table {
-    min-width: 700px;
+    min-width: 680px;
+  }
+
+  .admin-mini-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .admin-mini-stat {
+    padding: 14px 16px;
+  }
+
+  .admin-skeleton-row {
+    min-width: 620px;
+  }
+}
+
+@media (max-width: 520px) {
+  .admin-table-header {
+    margin-bottom: 18px;
+  }
+
+  .admin-mini-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-mini-stat-value {
+    font-size: 20px;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-table-wrapper {
+    background: transparent;
+    border: none;
+    overflow: visible;
+  }
+
+  .admin-table {
+    min-width: 0;
+    border-collapse: separate;
+    border-spacing: 0 12px;
+  }
+
+  .admin-table thead {
+    display: none;
+  }
+
+  .admin-table,
+  .admin-table tbody,
+  .admin-table tr,
+  .admin-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .admin-table tbody tr {
+    background: var(--surface-primary);
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .admin-table td {
+    border-bottom: 1px solid var(--surface-border);
+    padding: 10px 14px;
+  }
+
+  .admin-table td:last-child {
+    border-bottom: none;
+  }
+
+  .admin-cell-truncate,
+  .admin-cell-stack-primary,
+  .admin-cell-stack-secondary {
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-actions {
+    justify-content: flex-end;
+  }
+
+  .admin-action-btn,
+  .admin-toggle,
+  .admin-expand-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .admin-ai-thumb {
+    width: 44px;
+    height: 44px;
+  }
+
+  .admin-toggle {
+    width: 44px;
+    height: 24px;
+    border-radius: 999px;
+  }
+
+  .admin-toggle::after {
+    width: 20px;
+    height: 20px;
+  }
+
+  .admin-toggle.active::after {
+    transform: translateX(20px);
   }
 }

@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import {
   FiGrid, FiUsers, FiShoppingBag, FiFileText, FiPackage,
@@ -13,6 +14,23 @@ import './Sidebar.css';
 export default function AdminLayout() {
   const { logout } = useAuth();
   const { t } = useTranslation(['admin', 'common']);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (sidebarOpen) {
+      document.documentElement.classList.add('no-scroll');
+    } else {
+      document.documentElement.classList.remove('no-scroll');
+    }
+    return () => {
+      document.documentElement.classList.remove('no-scroll');
+    };
+  }, [sidebarOpen]);
 
   const adminLinks = [
     { path: '/admin', label: t('common:sidebar.overview'), icon: FiGrid, end: true },
@@ -31,9 +49,13 @@ export default function AdminLayout() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Navbar />
+      <Navbar 
+        showSidebarToggle={true} 
+        onSidebarToggle={() => setSidebarOpen(!sidebarOpen)} 
+        sidebarOpen={sidebarOpen} 
+      />
       <div className="dashboard-layout">
-        <aside className="sidebar" id="admin-sidebar">
+        <aside className={`sidebar ${sidebarOpen ? 'sidebar-open' : ''}`} id="admin-sidebar">
           <div className="sidebar-header">
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <FiShield style={{ color: 'var(--gold-primary)', fontSize: 18 }} />
@@ -65,6 +87,9 @@ export default function AdminLayout() {
             </button>
           </nav>
         </aside>
+        {sidebarOpen && (
+          <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+        )}
         <div className="dashboard-content">
           <Outlet />
         </div>

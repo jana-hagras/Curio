@@ -1,10 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Cairo:wght@300;400;500;600;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Cairo:wght@300;400;500;600;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap");
 
 [lang="ar"] {
-  --font-body: 'Cairo', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-heading: 'Noto Naskh Arabic', 'Cairo', serif;
+  --font-body: "Cairo", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: "Noto Naskh Arabic", "Cairo", serif;
 }
-
 
 /* ═══════════════════════════════════════════
    CURIO — Design System  (Black + Gold)
@@ -12,60 +11,72 @@
 
 :root {
   /* ── Brand Colors ── */
-  --gold-primary: #D4A843;
-  --gold-light: #E0BC5E;
-  --gold-lighter: #F0D98A;
-  --gold-dark: #B8912A;
-  --gold-gradient: linear-gradient(135deg, #D4A843 0%, #E0BC5E 50%, #F0D98A 100%);
-  --gold-gradient-hover: linear-gradient(135deg, #B8912A 0%, #D4A843 50%, #E0BC5E 100%);
+  --gold-primary: #d4a843;
+  --gold-light: #e0bc5e;
+  --gold-lighter: #f0d98a;
+  --gold-dark: #b8912a;
+  --gold-gradient: linear-gradient(
+    135deg,
+    #d4a843 0%,
+    #e0bc5e 50%,
+    #f0d98a 100%
+  );
+  --gold-gradient-hover: linear-gradient(
+    135deg,
+    #b8912a 0%,
+    #d4a843 50%,
+    #e0bc5e 100%
+  );
 
   /* ── Black Palette (Primary) ── */
-  --black-deep: #0A0A0E;
+  --black-deep: #0a0a0e;
   --black-mid: #101015;
-  --black-soft: #16161E;
-  --black-muted: #22222E;
+  --black-soft: #16161e;
+  --black-muted: #22222e;
 
   /* ── Surface Colors ── */
-  --surface-primary: #FFFFFF;
-  --surface-secondary: #FCFAF7;
-  --surface-tertiary: #F2EDE4;
-  --surface-border: #EAE6DF;
-  --cream: #FCFAF7;
-  --white: #FFFFFF;
+  --surface-primary: #ffffff;
+  --surface-secondary: #fcfaf7;
+  --surface-tertiary: #f2ede4;
+  --surface-border: #eae6df;
+  --cream: #fcfaf7;
+  --white: #ffffff;
 
   /* ── Text Colors ── */
   --text-primary: #141416;
-  --text-secondary: #6B6B76;
-  --text-tertiary: #9CA3AF;
-  --text-light: #FFFFFF;
-  --text-gold: #D4A843;
+  --text-secondary: #6b6b76;
+  --text-tertiary: #9ca3af;
+  --text-light: #ffffff;
+  --text-gold: #d4a843;
 
   /* ── Legacy Aliases ── */
-  --navy-deep: #0A0A0E;
+  --navy-deep: #0a0a0e;
   --navy-mid: #101015;
-  --navy-light: #16161E;
-  --sand-light: #FCFAF7;
-  --sand-warm: #EAE6DF;
-  --sand-dark: #C8C3B8;
+  --navy-light: #16161e;
+  --sand-light: #fcfaf7;
+  --sand-warm: #eae6df;
+  --sand-dark: #c8c3b8;
 
   /* ── Default Fallback Placeholder ── */
-  --fallback-img: url('https://images.unsplash.com/photo-1581428982868-e410dd047a90?w=800&q=80');
+  --fallback-img: url("https://images.unsplash.com/photo-1581428982868-e410dd047a90?w=800&q=80");
 
   /* ── Status Colors ── */
-  --success: #10B981;
-  --success-light: #D1FAE5;
-  --error: #EF4444;
-  --error-light: #FEE2E2;
-  --warning: #F59E0B;
-  --warning-light: #FEF3C7;
-  --info: #3B82F6;
-  --info-light: #DBEAFE;
+  --success: #10b981;
+  --success-light: #d1fae5;
+  --error: #ef4444;
+  --error-light: #fee2e2;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --info: #3b82f6;
+  --info-light: #dbeafe;
   --green-600: #059669;
 
   /* ── Shadows ── */
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.02);
-  --shadow-md: 0 10px 30px -10px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.02);
-  --shadow-lg: 0 20px 40px -12px rgba(0, 0, 0, 0.08), 0 1px 5px rgba(0, 0, 0, 0.03);
+  --shadow-md:
+    0 10px 30px -10px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.02);
+  --shadow-lg:
+    0 20px 40px -12px rgba(0, 0, 0, 0.08), 0 1px 5px rgba(0, 0, 0, 0.03);
   --shadow-xl: 0 30px 60px -15px rgba(0, 0, 0, 0.12);
   --shadow-gold: 0 8px 20px -6px rgba(212, 168, 67, 0.25);
   --shadow-gold-lg: 0 15px 30px -8px rgba(212, 168, 67, 0.35);
@@ -78,8 +89,8 @@
   --radius-full: 9999px;
 
   /* ── Typography ── */
-  --font-heading: 'Playfair Display', Georgia, serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: "Playfair Display", Georgia, serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 
   /* ── Spacing ── */
   --space-xs: 4px;
@@ -110,37 +121,39 @@
 }
 
 [data-theme="dark"] {
-  --black-deep: #0A0A0E;
+  --black-deep: #0a0a0e;
   --black-mid: #101015;
-  --black-soft: #16161E;
-  --black-muted: #22222E;
+  --black-soft: #16161e;
+  --black-muted: #22222e;
 
   --surface-primary: #121216;
-  --surface-secondary: #0A0A0E;
-  --surface-tertiary: #1C1C24;
+  --surface-secondary: #0a0a0e;
+  --surface-tertiary: #1c1c24;
   --surface-border: rgba(255, 255, 255, 0.08);
-  --cream: #0A0A0E;
+  --cream: #0a0a0e;
   --white: #121216;
 
-  --navy-deep: #0A0A0E;
+  --navy-deep: #0a0a0e;
   --navy-mid: #101015;
-  --sand-light: #0A0A0E;
-  --sand-warm: #1C1C24;
-  --sand-dark: #22222E;
+  --sand-light: #0a0a0e;
+  --sand-warm: #1c1c24;
+  --sand-dark: #22222e;
 
-  --text-primary: #E8E8EC;
-  --text-secondary: #A0A0AA;
+  --text-primary: #e8e8ec;
+  --text-secondary: #a0a0aa;
   --text-tertiary: #707076;
 
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 10px 30px -10px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 20px 40px -12px rgba(0, 0, 0, 0.5), 0 1px 5px rgba(0, 0, 0, 0.15);
+  --shadow-md:
+    0 10px 30px -10px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-lg:
+    0 20px 40px -12px rgba(0, 0, 0, 0.5), 0 1px 5px rgba(0, 0, 0, 0.15);
 
   /* Status colors for dark mode - softer backgrounds */
-  --error-light: #3B1C1C;
-  --success-light: #1C3B2A;
-  --warning-light: #3B331C;
-  --info-light: #1C2A3B;
+  --error-light: #3b1c1c;
+  --success-light: #1c3b2a;
+  --warning-light: #3b331c;
+  --info-light: #1c2a3b;
 }
 
 /* ── Dark mode form element overrides ── */
@@ -203,11 +216,16 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--surface-secondary);
+  width: 100%;
+  overflow-x: hidden;
 }
 
 #root {
   min-height: 100vh;
   background-color: var(--surface-secondary);
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -217,6 +235,9 @@ body {
   color: var(--text-primary);
   background-color: var(--surface-secondary);
   min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 h1,
@@ -269,6 +290,11 @@ img {
   max-width: 100%;
   height: auto;
   display: block;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
 button {
@@ -432,8 +458,21 @@ ol {
 }
 
 /* Global scale-down press feedback */
-a, button, select, input, textarea, .btn, .product-card, .artisan-card, .sidebar-link, .feature-card {
-  transition: transform 150ms cubic-bezier(0.25, 0.8, 0.25, 1), background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+a,
+button,
+select,
+input,
+textarea,
+.btn,
+.product-card,
+.artisan-card,
+.sidebar-link,
+.feature-card {
+  transition:
+    transform 150ms cubic-bezier(0.25, 0.8, 0.25, 1),
+    background-color 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease;
 }
 
 a:active:not(.navbar-logo):not(.navbar-brand),
@@ -540,7 +579,6 @@ textarea:focus,
 }
 
 @keyframes pulse {
-
   0%,
   100% {
     opacity: 1;
@@ -552,7 +590,6 @@ textarea:focus,
 }
 
 @keyframes float {
-
   0%,
   100% {
     transform: translateY(0);
@@ -644,13 +681,15 @@ textarea:focus,
   border-radius: var(--radius-sm);
   white-space: nowrap;
   pointer-events: none;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
   box-shadow: var(--shadow-md);
   z-index: var(--z-dropdown);
 }
 
 .earnings-tooltip::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 100%;
   left: 50%;
@@ -701,6 +740,24 @@ textarea:focus,
 
   .container {
     padding: 0 var(--space-md);
+  }
+
+  button,
+  .btn,
+  select,
+  .navbar-link,
+  .navbar-mobile-toggle,
+  .navbar-cart {
+    min-height: 44px;
+  }
+
+  input,
+  textarea,
+  select,
+  .input-field,
+  .textarea-field,
+  .select-field {
+    font-size: 16px;
   }
 
   .section {
@@ -755,4 +812,11 @@ textarea:focus,
 /* Dynamic direction-based translation for transforms */
 [dir="rtl"] .rtl-flip {
   transform: scaleX(-1);
+}
+
+.no-scroll,
+.no-scroll body {
+  overflow: hidden !important;
+  height: 100vh !important;
+  height: 100dvh !important;
 }

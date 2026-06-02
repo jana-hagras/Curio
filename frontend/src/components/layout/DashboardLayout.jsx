@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import {
   FiGrid, FiShoppingBag, FiFileText, FiDollarSign, FiUser,
@@ -16,6 +17,23 @@ export default function DashboardLayout() {
   const { isBuyer, isArtisan } = useAuth();
   const { totalUnread } = useChat();
   const { t } = useTranslation('common');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (sidebarOpen) {
+      document.documentElement.classList.add('no-scroll');
+    } else {
+      document.documentElement.classList.remove('no-scroll');
+    }
+    return () => {
+      document.documentElement.classList.remove('no-scroll');
+    };
+  }, [sidebarOpen]);
 
   const buyerLinks = [
     { path: '/dashboard', label: t('sidebar.overview'), icon: FiGrid, end: true },
@@ -46,9 +64,13 @@ export default function DashboardLayout() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Navbar />
+      <Navbar 
+        showSidebarToggle={true} 
+        onSidebarToggle={() => setSidebarOpen(!sidebarOpen)} 
+        sidebarOpen={sidebarOpen} 
+      />
       <div className="dashboard-layout">
-        <aside className="sidebar" id="sidebar">
+        <aside className={`sidebar ${sidebarOpen ? 'sidebar-open' : ''}`} id="sidebar">
           <div className="sidebar-header">
             <h3>{t('nav.dashboard')}</h3>
           </div>
@@ -84,6 +106,9 @@ export default function DashboardLayout() {
             ))}
           </nav>
         </aside>
+        {sidebarOpen && (
+          <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+        )}
         <div className="dashboard-content">
           <BackButton />
           <Outlet />
