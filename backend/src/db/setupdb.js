@@ -492,6 +492,7 @@ export const initDatabase = async () => {
         await migrateRequestImageAndSelection(conn);
         await migrateWorkshopMeetingLink(conn);
         await migrateChatbotKnowledge(conn);
+        await migrateCloudinaryHttps(conn);
 
     } finally {
         conn.release();
@@ -946,5 +947,53 @@ async function migrateChatbotKnowledge(conn) {
         console.log("  ✅ ChatbotKnowledge seeded successfully");
     } catch (e) {
         console.warn("  ⚠️ ChatbotKnowledge migration/seeding warning:", e.message);
+    }
+}
+
+// ─── Migrate all Cloudinary URLs from HTTP to HTTPS ───
+async function migrateCloudinaryHttps(conn) {
+    try {
+        const tablesAndColumns = [
+            { table: 'user', column: 'ProfileImage' },
+            { table: 'Request', column: 'UploadedImageUrl' },
+            { table: 'RequestAIGeneration', column: 'GeneratedImageUrl' },
+            { table: 'Gallery', column: 'Image' },
+            { table: 'Market_Item_Image', column: 'image_url' },
+            { table: 'Message', column: 'attachment_url' },
+            { table: 'Review', column: 'Attachment' }
+        ];
+
+        // First check which tables exist in CURIO database to avoid query failures
+        const tableNames = tablesAndColumns.map(tc => tc.table);
+        const [rows] = await conn.query(
+            "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'CURIO' AND TABLE_NAME IN (?)",
+            [tableNames]
+        );
+        const existingTables = new Set(rows.map(r => r.TABLE_NAME));
+
+        for (const { table, column } of tablesAndColumns) {
+            if (!existingTables.has(table)) continue;
+
+            // Check if the column exists in the table
+            const [cols] = await conn.query(
+                "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'CURIO' AND TABLE_NAME = ? AND COLUMN_NAME = ?",
+                [table, column]
+            );
+            if (cols.length === 0) continue;
+
+            // Update HTTP URLs to HTTPS
+            const [result] = await conn.query(`
+                UPDATE \`${table}\`
+                SET \`${column}\` = REPLACE(\`${column}\`, 'http://res.cloudinary.com', 'https://res.cloudinary.com')
+                WHERE \`${column}\` LIKE 'http://res.cloudinary.com%'
+            `);
+
+            if (result.affectedRows > 0) {
+                console.log(`  ✅ Migrated ${result.affectedRows} HTTP Cloudinary URLs in \`${table}\`.\`${column}\``);
+            }
+        }
+        console.log("Cloudinary HTTPS migration complete ✅");
+    } catch (e) {
+        console.warn("  ⚠️ Cloudinary HTTPS migration warning:", e.message);
     }
 }
